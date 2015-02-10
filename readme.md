@@ -8,7 +8,7 @@
     * **Mac and Linux**:
 
         ```R
-        devtools::install_github("jdthorpe/devtools")
+        devtools::install_github("jdthorpe/LifeTable")
         ```
 
     * **Windows**:
@@ -18,9 +18,9 @@
         build_github_devtools()
 
         #### Restart R before continuing ####
-        install.packages("mfactor.zip", repos = NULL)
+        install.packages("LifeTable.zip", repos = NULL)
 
         # Remove the package after installation
-        unlink("mfactor.zip")
+        unlink("LifeTable.zip")
         ```
 
