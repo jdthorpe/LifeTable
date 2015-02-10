@@ -1,0 +1,670 @@
+---
+title: "An introduction to the 'LifeTable' package"
+author: "Jason Thorpe [jdthorpe_at_gmail.com]"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{LifeTable}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+```{r, echo=F}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Preliminaries
+
+A life table divides a birth cohort into a discrete set of states such that 
+for any given age, an individual in the cohort is place in exactly 1 state.
+States in a two-state, might be "Alive" vs. "Dead", and in a three-state
+life table might be "Alive without disease", "Alive with Disease", and
+"Dead".  
+
+The states that make up a Life tables can be represented by a graph such as:
+
+```{r}
+# make graphs here.
+```
+
+This package further assumes that the graph is acyclic, meaning that once an
+individual moves out of a particular state, it is not possible to return to
+that state.  In the three-state model, it is therefor not possible to return
+to the "Alive without disease", after having departed that state to either
+the "Alive with diseae" or "Dead" state. 
+
+Creating an acyclig graph can often be achieved by defining states on the
+events in an individual's history.  For example, we can re-define the three
+state model by re-naming the categories "No Prior death or diagnosis",
+"Prior Disease Diagnosis without Prior Death", and "Prior Death".  Whith
+these lables, it is clear that even if an individual recovers from a disease
+and is considered "disease free" from a clinical standpoint, that individual
+still belongs in the second state in the state-space. 
+
+Because the State-Space is acyclic, three will naturally be a source states
+(states which only have arrows pointing away from them), zero or more
+transient states (states with arrows pointing toward and away), and one or
+more absorbing states (states which only have arrows pointing toward them.
+In our three-state life table, "Alive without Disease" is a source state,
+and "Dead" is an absorbing state.  When defining states based on the events
+in an individual's history at a given age, there can be only one source state
+("no prior events") but there can be multiple transient states (e.g. multiple
+disease states) and absorbing states (e.g. Death With vs. without disease)
+
+The *Incidence* of a given state is the number of individuals who arrive at
+that state.  For example, when the three state model has run to completion
+(the date of death of the last individual in the cohort), the incidence of
+death will be 100%, the incidence of "disease" will between 0 and 100%, and
+the incidence of healthy will be zero (since no-one 'arrives' at that
+state).
+
+When thinking about incidence, the 'States-as-a-set-of-prior-events' is
+particularly useful, because we can define the incidence of a state as the
+incidence of a particular event, such as disease diagnosis or death.  
+For a given time interval $[t_0,t_1]$, the incidence depencs on the size of
+the at-riak population and the risk of that particular event and the
+duration of the time period (t_1 - t_0).  For source states, the incidence
+during any period is zero, and for absorbing states, the
+incidence is the difference between the portion of the population at that
+state between $t_0$ and $t_1$.  For any given time period, the incidence of
+a transient state will typically be greater than the difference between 
+the number of individuals at that state between the start and end of the
+time period.  For example, if the 'disease' state in the 3-state model is
+highly lethal (Pancreatic cancer, for example), and the time periods were
+relatively long (10 years), nearly all individuals who entered the disease
+state during that interval would have died by the end of the interval.  
+
+
+## Definitions
+
+A *state table* is a matrix where each row represents the distribution of the
+birth cohort across the state space at a specific age. 
+
+A *discrete **net** hazard* ($h_{i,j}$) is the probability that an individual in
+state $i$ will be in state $j$ at the end of a fixed period **in the absence of
+all other competing risks**.  
+
+A *continuous **net** hazard* $\lambda_{i,j}$ describes the rate that
+individuals in state *i* transition to state *j* **in the absence of all other
+competing risks**.   Continuous and discrete net hazards are related by the
+equation 
+
+ $h = 1 - e^{-\lambda \cdot (t_1 - t_0)}$
+
+where $t_0$ and $t_1$ are the ages at the start and end of the defined
+interval.   For convenience, the LifeTable packages assumes that 
+$t_1 - t_0 = 1$, which simplifies the above relation to:
+
+ $h = 1 - e^{-\lambda }$
+
+A (continuous) transition marix ($\Lambda$) is an $N x N$ matrix where 
+the $(i,j)^{th}$ element is the continuous net hazard ($\lambda_{i,j}$).
+
+In the case when there is exactly one source (the first state in the
+matrix, by convention), the transition matrix can be factored into the
+absolute net hazards $\{\lambda_{i,1}\}$ and the *model matrix* $\{m_{i,j}\}$
+with where 
+
+\[ m_{i,j} = \left\{ \begin{array}{ll}
+\dfrac{\lambda_{i,j}}{\lambda_{i,1}} & \mbox{if $\lambda_{i,1} \gt 0$};\\
+0 & \mbox{otherwise}\end{array} \right. \]
+
+
+Since the model matrix describes the relative risks of experieincing a
+particular event conditional on the events in an individual's history, 
+the model matrix will be typically be constructed from one or more Cox PH
+models where each model is used to construct one row of the model matrix.
+
+## Exercises
+
+In this exercise, we will compose a life table to describe a cohort of women
+who move through the following state space:
+
+- Death without a prior diagnosis of Ovarian Cancer (Dead Without Cancer)
+- Previous diagnosis with ovarian cancer (EOC)
+- Ovaries Removed (with or without a previous tubal ligation or hysterectomy
+  (Oophorectomized)
+- Hysterecomized with or without prior tubal ligation (Hysterectomized)
+- Tubes ligated (TL)
+- None of the above (Healthy)
+
+```{r}
+# add figure here.
+```
+
+The first two states are *absorbing states* which together will eventually
+absorb the entire population, and the last state on the 
+
+## Creating Life Tables
+
+To create a state table, we need (1) the initial state, (2) the Relative
+Hazards matrix, and either (3.A) the incidence for each state or (3.B) the net hazards
+for the reference state. 
+
+
+The LifeTable package contains examples of state tables generated by the
+[DevCan Software](http://surveillance.cancer.gov/devcan).  The dataset `EOC_develop` is a life table which includes 3
+states: (1) Alive without Cancer, (2) Diagnosed with cancer, and (3) Dead
+without cancer.
+
+
+```{r}
+library(LifeTable)
+data(EOC_develop)
+head(EOC_develop,3)
+```
+
+Since columns 5 and 6 in the `EOC_develop` contain the cumulative
+probabilities of developing cancer or dying without cancer by the end of the
+interval, we can create a state table with these 
+
+
+```{r}
+stateTable <- cbind(healthy = 1- EOC_develop$CumProbDevelopCancer 
+							   - EOC_develop$CumProbDeathWithoutCancer,
+		cancer = EOC_develop$CumProbDevelopCancer,
+		DeathWithoutEOC = EOC_develop$CumProbDeathWithoutCancer) 
+rownames(stateTable) <- seq(5,100,5)
+
+# for completeness, we can add the state of the population at birth
+stateTable <- rbind(
+			birth = c( healthy = 1, # everyone starts out without cancer
+					cancer = 0, 
+					DeathWithoutEOC = 0) ,
+			 stateTable)
+
+head(stateTable,3)
+```
+
+As a trivial example, we can re-construct this life tables using the
+`lifetable()` function using the incidence columns in `EOC_develop`. 
+
+
+```{r}
+
+# the hypothetical birth cohort of 10,000,000 begins healthy
+initialState <- c(healthy=10000000, 
+				  cancerOrDead=0,
+				  DeathWithoutEOC=0)
+
+# incidence numbers taken from EOC_develop 
+incidenceMatrix <- cbind(
+		healthy = 0,
+		cancer = EOC_develop$DevelopCancer,
+		DeathWithoutEOC = EOC_develop$DeathsWithoutCancer)
+rownames(incidenceMatrix) <- rownames(EOC_develop)
+
+# Hazard ratios are relative to the othere elements of in the row
+modelMatrix <- matrix(
+		c(0,0,0,
+		  1,0,0,
+		  1,0,0),nrow=3,byrow=T)
+
+Cancer_Vs_Death <- lifeTable(
+				  initialState=initialState,
+				  incidence=incidenceMatrix,
+				  hazardModel =modelMatrix )
+
+head(Cancer_Vs_Death,3)
+
+```
+
+Notice that the numbers in above state table are relative to the size of our
+model cohort of 10,000,000.  We can re-scale the above life table in order
+to recapitulate the first example:
+
+```{r}
+head(Cancer_Vs_Death$states/10000000,3)
+```
+
+In addition to re-capitulating the state table, `lifeTable()` has also
+calculated the net hazards for the referecne category ($\lambda_{i,1}$):
+
+
+```{r}
+head(Cancer_Vs_Death$netHazards,3)
+```
+
+## Expanding the life table
+
+Transient states can be added to the model if either the
+incidence or net hazards of each state additional state are knowon. 
+
+Here, we'll add 3 transient states in order to incorporate the use of Tubal
+Ligation, Hysterectomy with Salpingectomy (Removal of the uterus and tubes),
+and Oophorectomy (removal of the ovaries) into our model.   The `LifeTable` 
+package contains a dataset with the numbers of each of these procedures per 
+100k persons in the United States in 2003.  
+
+```{r}
+data(GyneclogicalSureryRatesPer100k)
+
+# (Notice that these data use very coarse age categories)
+head(GyneclogicalSureryRatesPer100k,3)
+
+
+# we're intereseted in all excision of the uterus, so we 
+# need to include both sub-categories.
+AnualHyterectomyRates <- (GyneclogicalSureryRatesPer100k$"Hysterectomy__abdominal_and_vaginal" +
+					 GyneclogicalSureryRatesPer100k$"Other_excision_of_cervix_and_uterus") / 100000
+AnualTubalLigationRates <- GyneclogicalSureryRatesPer100k$"Ligation_of_fallopian_tubes"/ 100000
+AnualOophorectomyRates <- GyneclogicalSureryRatesPer100k$"Oophorectomy__unilateral_and_bilateral"/ 100000
+
+```
+
+The above rates need to be scaled to the US Female population
+since we are modeling an all female cohort.   We can manage this conversion
+using  2003 US census counts by sex included in the dataset
+`US_population_2003`:
+
+
+```{r}
+data(US_population_2003)
+head(US_population_2003,3)
+
+US_population_2003[20,] <- US_population_2003[20,] + US_population_2003[21,]
+US_population_2003 <- US_population_2003[-21,]
+
+scale_factor <- US_population_2003$all / US_population_2003$female
+
+AnualHyterectomyRates   <- AnualHyterectomyRates * scale_factor 
+AnualTubalLigationRates <- AnualTubalLigationRates * scale_factor
+AnualOophorectomyRates  <- AnualOophorectomyRates * scale_factor
+```
+
+Depending on how the numbers of procedures were surveyed, there are two ways we can
+calculate incidence figures required to expand the life table.
+
+### Method 1: Rates as Incidence
+
+The denominator for the 'rate' variables calculated above is 
+the estimated number alive of women in the observation period for each age
+range. If these rates they can be used  calculate the incidence of each of 
+the transient staes if by multiplying each by the proportion of the
+original birth cohort that is alive during each age interval.  
+
+However, the life table `EOC_develop`, does not have an 'alive' category,
+and no combination of the three states captures the proportion alive wihtin 
+each interval.  In order to calculate the incidence for our expanded life
+table, we'll need to take advantage of another the dataset `EOC_death`
+(also constructed by DevCan) which includes three states: (1) Alive (2) dead from
+cancer, and (3) Dead without cancer.  
+
+```{r}
+data(EOC_death)
+head(EOC_death,3)
+
+# calculate the at-risk population * 
+dead  <- EOC_death$"CumProbDeath" 
+alive <- 1 - dead
+
+# scale the rates to the proporition of the birth cohort
+# that is alive in each age range rather than 100,000
+HyterectomyIncidence   <- alive * 5 * AnualHyterectomyRates   / 100000 
+TubalLigationIncidence <- alive * 5 * AnualTubalLigationRates / 100000 
+OophorectomyIncidence  <- alive * 5 * AnualOophorectomyRates  / 100000 
+
+# (Note that each age category spans 5 years, hence the factor of 5)
+
+```
+
+(* Technically this is the population size at the *end* of the interval, so for
+this calculation, some kind of interpolation between the starting and ending
+population sizes may be appropriate.)
+
+
+### Method 2: Rates as Hazards
+
+In the model bitth cohort, the at-risk population for the three transient states is
+dwindling over time as women are diagnosed with cancer or die without
+cancer.  However, this may not be true of the at-risk population used in
+estimating the rates per 100k of each procedure.  In particular, the at-risk population 
+that may be steady state (if younger women age into the at risk population
+ at the approximatly the same rate that women die) or it may even be growing over 
+time (due to variation in the birth and death rates over the last century). 
+In the case of the steady-state at-risk population, the estimated rates can
+be incuded as as net hazards ($\lambda$)for the alive population, and We can use
+the relation 
+
+ $h = 1 - e^{-\lambda * (t_1 - t_0)}$
+
+to calculate the incidence as follows:
+
+```{r}
+# scale the rates to the proporition of the birth cohort
+# that is alive in each age range rather than 100,000
+HyterectomyIncidence_alt   <- alive * (1-exp( - 5 * AnualHyterectomyRates   / 100000 ))
+TubalLigationIncidence_alt <- alive * (1-exp( - 5 * AnualTubalLigationRates / 100000 ))
+OophorectomyIncidence_alt  <- alive * (1-exp( - 5 * AnualOophorectomyRates  / 100000 ))
+```
+
+In this instance, this adjustmemt makes little difference owing to the relatively low
+rates of each event (since as $\lambda \rightarrow 0$, $\frac{1-\lambda}{e^{-\lambda}} 
+\rightarrow 1 $ ).  
+
+
+## Constructing the life table.  
+
+To generate the state table, in addition to the incidence of each event at each
+step, we need (1) an initial state vector and (2) the model matrix to
+specify our model, as follows: 
+
+```{r}
+
+initialState <- c(healthy                = 1, # everyone starts out healthy 
+				  TubesLigated           = 0, # incidence: Tubal Ligation
+				  NoUterus               = 0, # incidence: hysterectomy
+				  NoOvariesAndNoEOC      = 0, # incidence: oophorectomy 
+				  OvarianCancer          = 0, # incidence: cancer
+				  DeathWithoutEOC        = 0) # incidence: dead without cancer 
+
+IncidenceTable <- cbind(
+	healthy              = 0,
+	TubesLigated         = TubalLigationIncidence_alt,
+	NoUterus             = HyterectomyIncidence_alt,
+	NoOvariesAndNoEOC    = OophorectomyIncidence_alt,
+	OvarianCancer        = Cancer_Vs_Death$incidence[,'cancerOrDead']/10000000,
+	DeathWithoutEOC      = Cancer_Vs_Death$incidence[,'DeathWithoutEOC']/10000000)
+
+hazardModel <- matrix(
+	c(  0,0,0,0,0,0,  # healthy              
+		1,0,0,0,0,0,  # TubesLigated         
+		1,1,0,0,0,0,  # NoUterus             
+		1,1,1,0,0,0,  # NoOvariesAndNoEOC 
+		1,1,1,0,0,0,  # OvarianCancer        
+		1,1,1,1,0,0), # DeathWithoutEOC      
+	nrow=6,
+	byrow=T)
+
+```
+
+Each column in the model matrix indicates the states that are possible to
+transition to *directly* from that state.  
+
+- Column one indicates that individuals without a medical history are at
+  risk for each of the events in the model.  
+- Column two indicates that individuals with only a Tubal Ligation are at
+  risk for any of the remaining events in the model.  
+- Column three indicates that individuals with a Tubal Ligation and/or
+  hysterectomy are at risk for Oophorectomy, EOC, and Death without EOC,
+- Column four indicates that individuals with an oophorectomy (with or without
+  prior Tubal Ligation or hysterectomy) are only at risk for Death without
+  EOC. (It's hard to get ovarian cancer without ovaries.)
+- Columns 5 and 6 indicate that Diagnosed with Ovarian Cancer and Death
+  without Cancer  are absorbing states.  
+
+Notice that our model has 6 states, and we have calculated 5 incidence
+parameters.   This is because we have 5 states for which we will be
+estimating hazard parameters, and one source state with a fixed hazard (zero)
+which need not be estimated.  
+
+We can now use `lifeTable()` to calculate a state table as follows:
+
+```{r}
+
+life_table_with_Procedures <- lifeTable(
+		initialState=initialState,
+		incidence   =IncidenceTable,
+		hazardModel =hazardModel )
+
+head(life_table_with_Procedures)
+
+tail(life_table_with_Procedures,3)
+
+```
+
+## Relative Risks (Hazard Ratios).  
+
+As mentioned earlier, the ratios of the elements within a row of the
+model matrix define hazard ratios for the each event for individuals in states represented
+by the respective columns. By convention, the reference category (no prior
+events) is the first state, and hence the elements in first column of the
+model matrix are set to 1 (with the exception of $m_{1,1}$ which is set to
+zero).  However, the above model matrix `hazardModel`, all of the hazards
+were equal to the reference hazard, which may not be true.
+
+We could suppose that at least some hysterectomies are motivated (at least in
+part) for sterilization, so perhaps women with an prior Tubal ligation would
+be 20% less likely to undergo hysterectomy.  Furthermore, a subset of Ovarian
+Cancers may arise in the tubes, so perhaps women with a tubal ligation are 30%
+less likely to be diagnosed with Ovarian Cancer, and women with a hysterectomy
+(in which fallopian tubes may be removed) could be at even lower risk of
+Ovarian cancer (say 40%). [If you haven't guessed, each of the numbers in this
+paragraph is made up.]  We specify this model as follows: 
+
+
+```{r}
+
+hazardModel_2 <- matrix(c(
+		0,0    ,0    ,0,0,0,
+		1,0    ,0    ,0,0,0,
+		1,1-0.2,0    ,0,0,0, # rate/risk of hysterectomy is 20% lower in women with a prior TL
+		1,1    ,1    ,0,0,0,
+		1,1-0.3,1-0.4,0,0,0, # rate/risk of EOC is 30% lower in women with a TL and 40% lower in women with prior Hysterectomy.
+		1,1    ,1    ,1,0,0),6,byrow=T)
+
+life_table_with_Procedures <- lifeTable(
+		initialState=initialState,
+		incidence   =IncidenceTable,
+		hazardModel =hazardModel )
+
+head(life_table_with_Procedures,3)
+
+tail(life_table_with_Procedures,3)
+
+```
+
+Notice that updating our hazard model affected the population states for the
+transient states, but not the absorbing states, because this the absorbing
+states can be calculated from the incidence alone.  However, updating the
+hazard model *did* affect the net hazards for every outcome.
+
+## Modeling an intervention
+
+After calculating a life-table via `lifetable()` a population intervention
+can be modeled by modifying some of the returned values, and creating a new 
+life table.  For example, since Tubal Ligation may potentially prevent
+Ovarian Cancer in some women, we may be interested in the effect of
+conducting tubal ligation when child bearing is complete.  For simplicity,
+we'll use age 40 in this example:
+
+
+```{r}
+# Extract the net Hazards matrix
+netHazards_TL_at_40 <- life_table_with_Procedures$netHazards
+
+# Set the net hazards of TL to infinity at age 40 which will
+# result in all women having their tubes ligated at age 40
+#  if they are in the at-risk population for TL at that time
+netHazards_TL_at_40['40 <= Age < 45','NoUterus'] <- Inf
+
+# Re-calculat the life table using the modified net hazard matrix
+TL_at_40 <- lifeTable( initialState=initialState,
+		netHazards  =netHazards_TL_at_40,
+		hazardModel =hazardModel_2 )
+
+tail(TL_at_40,3)
+```
+
+## What are my chances?
+
+The above example shows the effect of tubal ligation at age 40 in a birth
+cohort (for women who were in the at-risk population at 40).  However, for 
+a woman who is age currently 40, the previous analysis does not directly address 
+her chances for being diagnosed with Ovarian Cancer depending on whether 
+*she* elects to have tubal ligation or not.  To address the question of what 
+effect Tubal Ligation would have on *her* chances of being diagnosed with
+EOC, we can create a pair of life tables beginning at age 40 which begin
+with the reference population (n=1) having  TL or not:  
+
+
+```{r}
+# extract the net hazards matrix after age 40
+Net_Hazards_after_40 <- life_table_with_Procedures$netHazards[-1:-8,]
+head(Net_Hazards_after_40)
+
+# a new initial state starting with the entire population (n=1)  
+# in the 'tubes ligated' state.
+initialState_TL <- c(healthy        = 0, # everyone starts out healthy 
+				  TubesLigated      = 1, # incidence: Tubal Ligation
+				  NoUterus          = 0, # incidence: hysterectomy
+				  NoOvariesAndNoEOC = 0, # incidence: oophorectomy 
+				  OvarianCancer     = 0, # incidence: cancer
+				  DeathWithoutEOC   = 0) # incidence: dead without cancer 
+
+# re-calculate the life table begining with TL at age 40
+TL_at_age_40 <- lifeTable(
+		initialState = initialState_TL,
+		netHazards   = Net_Hazards_after_40,
+		hazardModel  = hazardModel_2 )
+
+tail(TL_at_age_40,3)
+
+```
+
+Similarly and the choice *not* to undergo TL can be modeled as follows: 
+
+```{r}
+# extract the net hazards matrix after age 40
+Net_Hazards_after_40_No_TL <- Net_Hazards_after_40
+
+# set the hazard of TL to zero, so that the woman will not ever undergo TL
+Net_Hazards_after_40_No_TL[,'TubesLigated'] <- 0 
+
+No_TL_at_age_40 <- lifeTable(
+		initialState = initialState,
+		netHazards   = Net_Hazards_after_40_No_TL,
+		hazardModel  = hazardModel_2 )
+
+tail(No_TL_at_age_40,3)
+```
+
+Looking at the state tables, we can see that the chances that our 40 year old
+woman is diagnosed with EOC in her lifetime is 1.38% if she does not elect
+to undergo Tubal ligation, and if she elects Tubal Ligation at age 40, her
+chances drop to 0.97%.  (*Don't forget* that the hazard ratios in this
+example were completely made up!)
+
+
+## Expanding a life table by sub-dividing a state
+
+Ovarian cancer has sub-types defined by histology which have substantially
+different risks of death, which we may want to include in our life table model.
+As always, to create a life table (which we'll use to calculate the net
+hazards, we'll need (1) a start state, (2) a hazard model, and
+(3) either incidence or net risks for each category.  We'll expand the
+previous 6-state life table to include histology specific EOC, and the
+easiest way to obtain the data required to expand the model is to separate
+the incidence of EOC into sub-categories.
+
+The table `HistologyByAge` contains the distributions of EOC subtypes by
+age, and we can use this to sub-divide the incidence of EOC in our
+life table (obtained from the SEER databases).  
+
+```{r}
+data(HistologyByAge)
+head(HistologyByAge,3)
+
+initialState <- c('healthy' = 1,
+					 'TubesLigated' = 0,
+					 'NoUterus' = 0,
+					 'NoOvariesAndNoEOC' = 0,
+					 'ClearCell' = 0,
+					 'Endometrioid' = 0,
+					 'Misc' = 0,
+					 'Mucinous' = 0,
+					 'Serous' = 0,
+					 'DeathWithoutEOC ' = 0)
+
+hazardModel <- matrix(
+		c(  0,0    ,0    ,0,0,0,0,0,0,0,  # healthy              
+			1,0    ,0    ,0,0,0,0,0,0,0,  # TubesLigated         
+			1,1-0.2,0    ,0,0,0,0,0,0,0,  # NoUterus             
+			1,1    ,1    ,0,0,0,0,0,0,0,  # NoOvariesAndNoEOC 
+			1,1    ,1    ,0,0,0,0,0,0,0,  # OvarianCancer: ClearCell     
+			1,1    ,1    ,0,0,0,0,0,0,0,  # OvarianCancer: Endometrioid         
+			1,1    ,1    ,0,0,0,0,0,0,0,  # OvarianCancer: Misc                
+			1,1    ,1    ,0,0,0,0,0,0,0,  # OvarianCancer: Mucinous            
+			1,1-0.3,1-0.4,0,0,0,0,0,0,0,  # OvarianCancer: Serous              
+			1,1    ,1    ,1,0,0,0,0,0,0), # DeathWithoutEOC      
+		10,byrow=T)
+
+hazardModel
+
+# (Just re-asigning for clarity)
+.LT = life_table_with_Procedures
+
+IncidenceTable <- cbind(
+		"healthy"           = .LT$incidence[,'healthy'],
+		"TubesLigated"      = .LT$incidence[,'TubesLigated'],
+		"NoUterus"          = .LT$incidence[,'NoUterus'],
+		"NoOvariesAndNoEOC" = .LT$incidence[,'NoOvariesAndNoEOC'],
+		'ClearCell'         = .LT$incidence[,'OvarianCancer'] * HistologyByAge$ClearCell,
+		'Endometrioid'      = .LT$incidence[,'OvarianCancer'] * HistologyByAge$Endometrioid,
+		'Misc'              = .LT$incidence[,'OvarianCancer'] * HistologyByAge$Misc,
+		'Mucinous'          = .LT$incidence[,'OvarianCancer'] * HistologyByAge$Mucinous,
+		'Serous'            = .LT$incidence[,'OvarianCancer'] * HistologyByAge$Serous,
+		"DeathWithoutEOC "  = .LT$incidence[,'DeathWithoutEOC' ])
+
+life_table_with_procedures_and_histology <- lifeTable(
+		initialState=initialState,
+		incidence   =IncidenceTable,
+		hazardModel =hazardModel )
+
+tail(life_table_with_procedures_and_histology,3)
+
+```
+
+Note that by subdividing the 'OvarianCancer' state into sub-states using the fraction
+of the incidence, we preserve the total incidence by age.  This would not be
+true if we subdivided the total hazard according to the proportions
+of the incidence of the subtypes by age.  In fact, if we had done so, we
+would have decreased the total incidence of EOC, and by the same token, by
+preserving the total incidence we have increased the sum of the net hazards:
+
+```{r}
+all(apply(life_table_with_Procedures$netHazards,1,sum)<= 
+	apply(life_table_with_procedures_and_histology$netHazards,1,sum))
+```
+
+This is expected because hazards are not additive.  Specifically because,
+$1-e^{-(x + y)} < (1-e^{-x}) + (1-e^{-x})$ when $x>0$ and $y>0$.
+
+## Generating PopSim Model Parameters
+
+
+To parameterize the PopSim model, we need to generate cumulative (net)
+distributions for each of the cancer subtypes and gynecologic procedures
+(contained in the life table `life_table_with_procedures_and_histology` as well as death
+from other causes (*not* `DeathWithoutEOC`), and we'll want to exclude the
+distribution for `DeathWithoutEOC` so that it is not accidentally used in
+the Model.  We'll first generate a simple life table object with alive vs.
+dead, and then use the function `generateModelParams()` to generate the
+parameters.  
+
+Note that there is an additional argument to `generateModelParams()` called
+`folder` which, if provided, will created two files *file/distributions.xml*
+and *folder/DecisionRule.py* with the distribution and Decision Rule files,
+respectively.
+
+
+```{r,eval=FALSE}
+generateModelParams <- function(ages=seq(0,100,5),
+							life_table_with_procedures_and_histology,
+							what to do here?
+							use dot args to pass multiple lifetables?
+							exclude='DeathWithoutEOC')
+decisionRuleWriter <- function(life_table_with_procedures_and_histology)
+```
+
+Note that the above code is *almost* everything you need to implement the
+PopSim model for a whole new disease!
+
+
+## Methodology
+
+This is where a description of the methodology will go.
+
+
+

@@ -1,0 +1,98 @@
+
+# BUILD THE PACKAGE
+
+paths <- .libPaths()
+(paths <- gsub('^\\\\\\\\home.fhcrc.org(\\\\|/)[-a-zA-Z0-9._]+(\\\\|/)?','h:\\\\',paths))
+.libPaths(paths)
+
+base:: o
+
+LTroot  = "H:/O/popsim/PopSim/dist/LifeTable" 
+
+LTroot  = "~/Dev/Rtools/LifeTable" 
+devtools::document(LTroot)
+
+LTroot  = "~/Dev/Rtools/LifeTable" 
+devtools::install(LTroot)
+
+LTroot  = "~/Dev/Rtools/LifeTable" 
+devtools::build_vignettes(LTroot)
+
+devtools::build("H:/O/popsim/PopSim/dist/LifeTable")
+devtools::build("H:/O/popsim/PopSim/dist/LifeTable",binary=TRUE)
+
+
+# COPY THE LIFE TABLE TO \data
+EOC_life_table <- read.csv("H:\\O\\popsim\\PopSim\\dist\\LifeTable\\data\\EOC_life_table.csv")
+devtools::use_data(EOC_life_table,pkg="H:/O/popsim/PopSim/dist/LifeTable")
+devtools::use_data(US_population_2003,pkg="H:/O/popsim/PopSim/dist/LifeTable")
+
+# H:\O\ovaca_popsim\conf\EventModel_XX_DX_TL_Hyst_BSO_ByHistology\Analysis\20140321_RiskParmeterEstimation_20141231_lean_data_Gen.r
+
+devtools::use_data(GyneclogicalSureryRatesPer100k,pkg=LTroot,overwrite=T)
+
+GyneclogicalSureryRatesPer100k <- GyneclogicalSureryRatesPer100k[-21,]
+rownames(GyneclogicalSureryRatesPer100k)[20] <- '95+'
+
+US_population_2003 <- data.frame(all=usPop2003 ,
+								 male=usPop2003 - usFemalePop2003, female=usFemalePop2003) 
+
+# BUILD THE VIGNETTE
+Sys.setenv(RSTUDIO_PANDOC="C:\\Users\\jthorpe\\AppData\\Local\\Pandoc\\")
+
+
+# GENERATE THE CALL GRAPH
+first set, all the objects to be exported by the package by changing the
+contents of NAMESPACE to 
+
+exportPattern('.')
+
+and then calling:  
+
+mvbutils:: foodweb(where = 'package:LifeTable',border = TRUE,
+        textcolor = "black", cex = 1.0, lwd=2)
+
+mvbutils:: foodweb(prune='countsToLifeTable',where = 'package:LifeTable',border = TRUE,
+        textcolor = "black", cex = 1.0, lwd=2)
+mvbutils:: foodweb(prune='distByAge2DiscreteHazards',where = 'package:LifeTable',border = TRUE,
+        textcolor = "black", cex = 1.0, lwd=2)
+mvbutils:: foodweb(prune='optimizeSwitchProbs',where = 'package:LifeTable',border = TRUE,
+        textcolor = "black", cex = 1.0, lwd=2)
+
+
+
+(tmp<-read.csv("H:\\O\\popsim\\PopSim\\dist\\LifeTable\\data\\EOC_raw_data.csv"))
+
+
+BirthToFive <- data.frame("AgeInterval" = "0 <= Age < 1",
+				 "Cases" = sum(tmp[1:2,"Cases"]),
+				 "IncidencePopulation" = sum(tmp[1:2,"IncidencePopulation"]),
+				 "IncidenceRate" = NA,
+				 "CancerDeaths" = sum(tmp[1:2,"CancerDeaths"]),
+				 "MortalityPopulation" = sum(tmp[1:2,"MortalityPopulation"]),
+				 "CancerMortalityRate" = NA,
+				 "DeathsFromOtherCauses" = sum(tmp[1:2,"DeathsFromOtherCauses"]),
+				 "OtherCausesMortalityRate" = NA,
+				 "TotalDeaths" = sum(tmp[1:2,"TotalDeaths"]),
+				 "TotalMortalityRate" = NA)
+
+EOC_raw_data <- rbind(BirthToFive,tmp[-1:-2,])
+
+range(EOC_raw_data$IncidenceRate - (EOC_raw_data$Cases/EOC_raw_data$IncidencePopulation),na.rm=T)
+range(EOC_raw_data$CancerMortalityRate - (EOC_raw_data$CancerDeaths/EOC_raw_data$MortalityPopulation),na.rm=T)
+range(EOC_raw_data$OtherCausesMortalityRate - (EOC_raw_data$DeathsFromOtherCauses/EOC_raw_data$MortalityPopulation),na.rm=T)
+range(EOC_raw_data$TotalMortalityRate - (EOC_raw_data$TotalDeaths/EOC_raw_data$MortalityPopulation),na.rm=T)
+
+
+EOC_raw_data$IncidenceRate <- (EOC_raw_data$Cases/EOC_raw_data$IncidencePopulation)
+EOC_raw_data$CancerMortalityRate <- (EOC_raw_data$CancerDeaths/EOC_raw_data$MortalityPopulation)
+EOC_raw_data$OtherCausesMortalityRate <- (EOC_raw_data$DeathsFromOtherCauses/EOC_raw_data$MortalityPopulation)
+EOC_raw_data$TotalMortalityRate <- (EOC_raw_data$TotalDeaths/EOC_raw_data$MortalityPopulation)
+
+
+devtools::use_data(EOC_raw_data,pkg="H:/O/popsim/PopSim/dist/LifeTable")
+
+
+HistologyByAge  <- read.csv(file.path(LTroot,'data','histologyByAge.csv'))[,-1]
+devtools::use_data(HistologyByAge,pkg=LTroot,overwrite=T)
+
