@@ -20,9 +20,7 @@
 #' zero (including \strong{all} of the diagonal elt's). All RR's 
 #' must be positive.
 #' 
-#' @param transformation the transformation to use in optimizing the rates.
-#' options include 'logOdds', 'logNegativeSquaredInverse',and 'identity',
-#' matched by \code{match.arg}.  (default = 'logOdds').
+#' @param .handleError used internally  
 #' 
 #' @note
 #' When incrementing a life table, it is necessary to know both where the
@@ -41,7 +39,7 @@
 continuousHazardsFromIncidenceCounts <- function(x0,
 						 incidence,
 						 RR,
-						 handleError=FALSE
+						 .handleError=FALSE
 						 ){
 
 	# Strategy: from the RR matrix, we will make a first 
@@ -160,7 +158,7 @@ row with no non-zero elts. (E.g. there must be >=1 source nodes.)'  )
 	})
 
 	if(factorizationError[[1]]){
-		if(handleError){
+		if(.handleError){
 			warning(noSolutionMessage)
 			return(-1)
 		}else

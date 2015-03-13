@@ -5,16 +5,27 @@
 #' 
 #' @export
 #' @family lifetable
-#' @param data A data.frame with one row per age interval, ordered by age.
-#' 
+	#' 
 #' @param initialState A vector with the distribution of the population
 #' across the state space at the start of the life table, or a life table 
 #' that is to be extended.
 #' 
-#' @param hazMX If the parameter \code{incidence} is sppecified, \code{hazMX} is
+#' @param finalState a N vector or (S)xN matrix with the final states at the 
+#' (each of several) time interval(s) in which a population is observed
+#' 
+#' @param hazard If the parameter \code{incidence} is sppecified, \code{hazard} is
 #' treated as a matrix with with the \strong{relative} hazards of transitioning
-#' between states, otherwise \code{hazMX} is treated as the  abosolute (net)
+#' between states, otherwise \code{hazard} is treated as the  abosolute (net)
 #' hazards of transitioning between states.
+#'
+#' @param netHazards a N vector or (S)xN matrix containing the net hazards
+#' for one or more time intervals. Note that only of of \code{hazard} and 
+#' \code{netHazards} should be specified.
+#' 
+#' @param hazardModel see \code{hazard} (to be completed)
+#' 
+#' @param hType the type of the hazards included in the arguemnt \code{hazard}.
+#' One of 'continuous' or 'discrete' (matched by match.arg())
 #' 
 #' @param incidence If provided, the this specifies the incidences [number
 #' of arrivals at each node] during the interval.  The incidence may be 
@@ -40,6 +51,9 @@
 #' 
 #' @param checkNames If \code{TRUE}, names / dimnames of the various inputs are checked 
 #' for consistency. (default=\code{FALSE})
+#' 
+#' @param quietly If \code{TRUE}, messages stating the methods being used to 
+#' calculate the life table are suppressed.
 #' 
 #' @note
 #' This implements a solution to a Homogeneous Linear Systemwith Constant 
@@ -213,7 +227,7 @@ lifeTable <- function(initialState,# a N vector or (S+1)xN matrix where S=(numbe
 			M <- continuousHazardsFromIncidenceCounts(x0=initialState,
 									 incidence=as.numeric(.INCIDENCE),
 									 RR = hazardModel[[i]],
-									 handleError=TRUE)
+									 .handleError=TRUE)
 			
 			if(identical(M,-1)){
 				if(i < nrow(incidence)){
@@ -227,7 +241,7 @@ lifeTable <- function(initialState,# a N vector or (S+1)xN matrix where S=(numbe
 			nextState <- continuousHazardsToLifeTableStep(initialState, M)
 
 			# CALCULATE STANDARDHAZARDS
-			.NETHAZARDS <- apply(M/hazardModel[[i]],1,median,na.rm=T)
+			.NETHAZARDS <- apply(M/hazardModel[[i]],1,median,na.rm=TRUE)
 			.NETHAZARDS[is.na(.NETHAZARDS)] <- 0
 
 			newIncidence <- EventCountsFromContinuousHazards(initialState,M)
@@ -298,11 +312,11 @@ lifeTable <- function(initialState,# a N vector or (S+1)xN matrix where S=(numbe
 														  M=hazard[[i]])
 
 			# CALCULATE INCIDENCE OVER THE COMMING INTERVAL
-			nextIncidence <- EventCountsFromContinuousHazards(x=initialState,
+			nextIncidence <- EventCountsFromContinuousHazards(x0=initialState,
 															  M=hazard[[i]])
 
 			# CALCULATE STANDARD HAZARDS
-			.NETHAZARDS <- apply(hazard[[i]]/hazardModel[[i]],1,median,na.rm=T)
+			.NETHAZARDS <- apply(hazard[[i]]/hazardModel[[i]],1,median,na.rm=TRUE)
 			.NETHAZARDS[is.na(.NETHAZARDS)] <- 0
 
 			# --------------------
@@ -356,19 +370,19 @@ lifeTable <- function(initialState,# a N vector or (S+1)xN matrix where S=(numbe
 }
 
 #' @export
-print.LifeTable <- function(x){
+print.LifeTable <- function(x,...){
 	cat('A LifeTable object with the following states:\n')
 	print(rbind(x$initialState,x$states))
 }
 
 #' @export
-head.LifeTable <- function(x,n=5){
+head.LifeTable <- function(x,n=5,...){
 	cat('A LifeTable object with the following states:\n')
 	head(rbind(x$initialState,x$states),n)
 }
 
 #' @export
-tail.LifeTable <- function(x,n=5){
+tail.LifeTable <- function(x,n=5,...){
 	cat('A LifeTable object with the following states:\n')
 	tail(rbind(x$initialState,x$states),n)
 }

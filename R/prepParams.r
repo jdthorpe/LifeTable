@@ -62,7 +62,7 @@ prepParams <- function(hazNameMX,  # a parameter matrix (character) see example 
 		# fixme: get rid of this, and possibly also the 'txHazList' variable
 		if(!txHazNameMat[i,j] == paste('HR_', hrCount,sep = '')){
 			print("(!txHazNameMat[i,j] == paste('HR_', hrCount,sep = ''))")
-			pause <- T
+			pause <- TRUE
 			while(pause)browser()
 		}
 		txHazList <- c(txHazList,
@@ -105,7 +105,7 @@ prepParams <- function(hazNameMX,  # a parameter matrix (character) see example 
 	for(from in 1:length(states))
 	for(to in 1:length(states))
 		if(length(alt_pathsFromAtoB(from,to,allGatesMX)))
-			allFromToMX[from,to] <- T
+			allFromToMX[from,to] <- TRUE
 
 	exitSwitches <- function(node){
 		# return a vector of switch names that 

@@ -14,7 +14,7 @@
 #' @param x a vector of probabilities
 #' @return  vector of log odds corresponding to \code{x}, the vector of probabilities.
 #' @examples
-#' logOddsToProbs(c(.25,.5.75))
+#' logOddsToProbs(c(.25,.5,.75))
 #' 
 
 logodds <- function(x) {

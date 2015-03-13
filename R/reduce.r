@@ -91,13 +91,13 @@ reduce <- function(sharedParamList,nullSwitches){
 	for(from in 1:length(states))
 	for(to in 1:length(states))
 		if(length(alt_pathsFromAtoB(from,to,reduced_allGatesMX)))
-			reduced_allFromToMX[from,to] <- T
+			reduced_allFromToMX[from,to] <- TRUE
 
 #-- 	print('allFromToMX')
 #-- 	print('allFromToMX')
 #-- 	print('allFromToMX')
 #-- 	print('allFromToMX')
-#-- 	while(T)browser()
+#-- 	while(TRUE)browser()
 
 	# ------------------------------------------------------------
 	# return the reduced parameters

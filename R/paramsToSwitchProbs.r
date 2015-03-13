@@ -8,13 +8,13 @@ paramsToSwitchProbs <- function(params,txParamNames,txHazList,hazNameMX){
 		stop("'param' object must have names'")
 	if(any(names(params) != txParamNames)){
 		print('(names(params) != txParamNames)')
-		while(T)browser()
+		while(TRUE)browser()
 	}
 	stopifnot(names(params) == txParamNames) # should be one less than the number of nodes
 	#if(any(is.na(params)))browser()
 	if(any(is.na(params))){
 		print("params argument passed to 'paramsToSwitchProbs' contains missing values" )
-		while(T)browser()
+		while(TRUE)browser()
 		stop("params argument passed to 'paramsToSwitchProbs' contains missing values" )
 	}
 	# ------------------------------

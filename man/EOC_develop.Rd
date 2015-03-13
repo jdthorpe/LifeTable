@@ -12,7 +12,7 @@
   \item{DeathsWithoutCancer}{Number Who Die From Other Causes This Interval Among cancer-free population at the beginning of the interval who did not develop cancer during the interval. }
   \item{CumProbDevelopCancer}{Cumulative Prob. Of Developing Cancer From Birth}
   \item{CumProbDeathWithoutCancer}{Cumulative Prob. Of Dying Cancer Free From Birth}
-  \item{CumProbCancerOrDeathOtherCauses} {Cumulative Prob. Of Developing Cancer Or Dying Cancer Free From Birth}
+  \item{CumProbCancerOrDeathOtherCauses}{Cumulative Prob. Of Developing Cancer Or Dying Cancer Free From Birth}
 }}
 \source{
 {

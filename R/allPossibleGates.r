@@ -19,7 +19,7 @@ allPossibleGates <- function(nSwitches=length(switchNames),
 			out = out |  switchStatesToGateMx(switchStates,...)
 		},error=function(x){
 			print(paste('error in switchStatesToGateMx ',i))
-			while(T)browser()
+			while(TRUE)browser()
 		})
 	}
 	elapsed = format(as.numeric(difftime( Sys.time(),startTime ,units = 'secs')),digits=4)

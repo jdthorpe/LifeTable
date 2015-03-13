@@ -7,13 +7,16 @@
 #' 
 #' @export
 #' @family lifetable
-#' @param data A data.frame with one row per age interval, ordered by age.
 #' 
 #' @param x0 A vector with the distribution of the population
 #' across the state space at the start of the life table iteration.  
 #' 
 #' @param M A matrix with the abosolute (net) risks of transition from any
 #' state in the state-space model to another.
+#' 
+#' @param steps positive integer. The number of rows to return in the life table for each 
+#' row in the parameter \code{M}.  Setting \code{stpes = n} results in the addtion
+#' of \code{n-1} intermediate records in the return value.
 #' 
 #' @note
 #' This implements a solution to a Homogeneous Linear Systemwith Constant 
@@ -24,7 +27,7 @@
 #' NOTE THAT THIS FUNCTION REQUIRES RATES AND NOT COUNTS OR PROBABILITEIS!
 #' if you have expected counts (i.e. proportions of the \strong{entire}
 #' birth cohort) of event (arrivals at a node) within an 
-#' interval, use \code\link{countsToLifeTable}
+#' interval, use \code{\link{countsToLifeTable}}
 
 continuousHazardsToLifeTableStep <- function(x0, M, steps=1){
 

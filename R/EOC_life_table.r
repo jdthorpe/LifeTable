@@ -12,7 +12,7 @@
 #'   \item{DeathsWithoutCancer}{Number Who Die From Other Causes This Interval Among cancer-free population at the beginning of the interval who did not develop cancer during the interval. }
 #'   \item{CumProbDevelopCancer}{Cumulative Prob. Of Developing Cancer From Birth}
 #'   \item{CumProbDeathWithoutCancer}{Cumulative Prob. Of Dying Cancer Free From Birth}
-#'   \item{CumProbCancerOrDeathOtherCauses} {Cumulative Prob. Of Developing Cancer Or Dying Cancer Free From Birth}
+#'   \item{CumProbCancerOrDeathOtherCauses}{Cumulative Prob. Of Developing Cancer Or Dying Cancer Free From Birth}
 #' }
 #' 
 #' @source {
@@ -42,8 +42,8 @@
 #' }
 "EOC_develop"
 
-#-- EOC_develop <- read.csv("H:\\O\\popsim\\PopSim\\dist\\LifeTable\\data\\EOC_develop.csv")
-#-- devtools::use_data(EOC_develop,pkg="H:/O/popsim/PopSim/dist/LifeTable")
+# EOC_develop <- read.csv("H:\\O\\popsim\\PopSim\\dist\\LifeTable\\data\\EOC_develop.csv")
+# devtools::use_data(EOC_develop,pkg="H:/O/popsim/PopSim/dist/LifeTable")
 
 
 #' A life table for Dying from Ovarian Cancer Vs. other causes

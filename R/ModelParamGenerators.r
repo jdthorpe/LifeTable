@@ -18,7 +18,7 @@
 
 generateModelParams <- function(ages,
 								  netHazards,
-								  hazardNames=colNames(netHazards),
+								  hazardNames=colnames(netHazards),
 								  file,
 								  baseSeed = format(as.Date(date(), "%a %b %d %H:%M:%S %Y"), "%Y%m%d")) { 
 	# validate parameters
@@ -73,6 +73,7 @@ generateModelParams <- function(ages,
 #' @param additive indicates whether the subsequent relative hazards are applied additively or if they replace the previously applied HR
 #' @param file A writable connection or a character string naming the file to write to
 #'
+#' @export
 #' @examples
 #' stateNames <- c('H',# healthy
 #'			'TL', # tubes ligated
@@ -89,7 +90,7 @@ generateModelParams <- function(ages,
 #'		1,1-0.3,1-0.4,0,0,0,
 #'		1,1    ,1    ,1,0,0),
 #'					  ncol=6,
-#'					  byrow=T,
+#'					  byrow=TRUE,
 #'					  dimnames = list(stateNames,
 #'									  stateNames))
 #'
@@ -137,7 +138,7 @@ decisionRuleWriter <- function(hazardModel,
 
 	eventNames = rownames(hazardModel)
 	for(i in 1:length(eventNames)){
-		nullFun <- T
+		nullFun <- TRUE
  		# WRITE THE DECLARAION
 		(name = eventNames[i])
 		cat("def ",name,'_processor(event):',sep = '')

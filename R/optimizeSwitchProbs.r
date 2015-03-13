@@ -86,15 +86,15 @@ optimizeSwitchProbs <- function(
 
 		if(any(nullSwitches %in% names(switchProbParamGuess))){
 			print('(any(nullSwitches %in% names(switchProbParamGuess)))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 		if(any(switchProbParamGuess == 1)){
 			print('(any(switchProbParamGuess == one))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 		if(any(switchProbParamGuess == 0)){
 			print('(any(switchProbParamGuess == zero ))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 		paramGuess <- logodds(switchProbParamGuess)
 	}
@@ -134,7 +134,7 @@ optimizeSwitchProbs <- function(
 
 		if(any(is.na(switchProbs)|is.nan(switchProbs))){
 			print('any(is.na(switchProbs)|is.nan(switchProbs))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 
 		mx <- get_pAB_matrix(allGatesMX=sharedParamList[['allGatesMX']],

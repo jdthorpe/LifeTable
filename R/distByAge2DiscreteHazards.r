@@ -20,12 +20,12 @@
 #' 
 #' @param ctsHazMxList a list of transition matricies
 #' 
-#' @param hazNameMX A character matrix  with names of the transition probabilies
-#' to be estimated .  Entries that are NA specify transitions that cannot be
-#' directly made in the model.  (see example below for details).
-#' 
-#' @param propHazMx A numeric matrix specifying the proportional hazards (see
-#' example below for details)
+#' @param sharedParamList a set of parameters shared across iterations of
+#' a life table calculateion, created by calling
+#' \code{prepParams(hazNameMX,propHazMx)}
+#'
+#' @param writeFile and optional file filename or connection to which intermediatae
+#' retults are written.  Allows for restarting when a (long running) process fails.
 #' 
 #' @param file (optional) Either a character string naming a file or a 
 #' connection open for writing.  '""' indicates output to the console.  This 
@@ -35,18 +35,10 @@
 #' interval
 #' 
 
-#-- distByAge2DiscreteHazards <- function(lifeTable,
-#-- 							   stateFields = names(lifeTable),
-#-- 							   ctsHazMxList,# a list of transition matricies
-#-- 							   hazNameMX ,# a parameter matrix (character) see example below for details
-#-- 							   propHazMx, # a proportional hazards matrix (numeric) see example below for details
-#-- 							   file){
-
 distByAge2DiscreteHazards <- function(lifeTable,# a data.frame with one row per age, ordered by age
 							   stateFields = names(lifeTable),# (optional) the fields in the datafraem which contain the counts or probabilies for each state
 							   ctsHazMxList,# a list of transition matricies
 							   sharedParamList,
-							   # fixme: dtos() is not available to all users
 							   writeFile=file.path(tempdir(),
 												   paste(format(as.Date(date(), "%a %b %d %H:%M:%S %Y"), "%Y%m%d"),
 														 '_distByAge2DiscreteHazards_tmp_outputs.csv',sep =''))
@@ -105,7 +97,7 @@ distByAge2DiscreteHazards <- function(lifeTable,# a data.frame with one row per 
 											  sharedParamList=sharedParamList)
 		},error=function(e){
 			print('ERROR: baseTransitionProbs <- optimizeSwitchProbs( hazNameMX = hazNameMX')
-			while(T)browser()
+			while(TRUE)browser()
 		})
 
 		changeProbs <- rbind(changeProbs,baseTransitionProbs)

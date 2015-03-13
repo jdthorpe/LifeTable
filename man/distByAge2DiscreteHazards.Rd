@@ -19,12 +19,9 @@ datafraem which contain the counts or probabilies for each state.}
 
 \item{ctsHazMxList}{a list of transition matricies}
 
-\item{hazNameMX}{A character matrix  with names of the transition probabilies
-to be estimated .  Entries that are NA specify transitions that cannot be
-directly made in the model.  (see example below for details).}
-
-\item{propHazMx}{A numeric matrix specifying the proportional hazards (see
-example below for details)}
+\item{sharedParamList}{a set of parameters shared across iterations of
+a life table calculateion, created by calling
+\code{prepParams(hazNameMX,propHazMx)}}
 
 \item{file}{(optional) Either a character string naming a file or a
 connection open for writing.  '""' indicates output to the console.  This

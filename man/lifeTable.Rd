@@ -13,6 +13,20 @@ lifeTable(initialState, hazardModel = hazard, hazard, netHazards,
 across the state space at the start of the life table, or a life table
 that is to be extended.}
 
+\item{hazardModel}{see \code{hazard} (to be completed)}
+
+\item{hazard}{If the parameter \code{incidence} is sppecified, \code{hazard} is
+treated as a matrix with with the \strong{relative} hazards of transitioning
+between states, otherwise \code{hazard} is treated as the  abosolute (net)
+hazards of transitioning between states.}
+
+\item{netHazards}{a N vector or (S)xN matrix containing the net hazards
+for one or more time intervals. Note that only of of \code{hazard} and
+\code{netHazards} should be specified.}
+
+\item{hType}{the type of the hazards included in the arguemnt \code{hazard}.
+One of 'continuous' or 'discrete' (matched by match.arg())}
+
 \item{incidence}{If provided, the this specifies the incidences [number
 of arrivals at each node] during the interval.  The incidence may be
 expressed as a proportion of the cohort that is expected to undergoe the event
@@ -31,6 +45,9 @@ with the current distribution of the cohort (begining with statstate), and retur
 a vector withthe proporitn of the cohort that represents the denominator
 for each incidence parameter in the current iteration of the life table.}
 
+\item{finalState}{a N vector or (S)xN matrix with the final states at the
+(each of several) time interval(s) in which a population is observed}
+
 \item{steps}{The number of records to add to the life table, for each row of
 'incidence' or each value of hasMX. If \code{incidence > 1}, then
 \code{incidence > 1} intermediate records are added to the returned life table}
@@ -38,12 +55,8 @@ for each incidence parameter in the current iteration of the life table.}
 \item{checkNames}{If \code{TRUE}, names / dimnames of the various inputs are checked
 for consistency. (default=\code{FALSE})}
 
-\item{data}{A data.frame with one row per age interval, ordered by age.}
-
-\item{hazMX}{If the parameter \code{incidence} is sppecified, \code{hazMX} is
-treated as a matrix with with the \strong{relative} hazards of transitioning
-between states, otherwise \code{hazMX} is treated as the  abosolute (net)
-hazards of transitioning between states.}
+\item{quietly}{If \code{TRUE}, messages stating the methods being used to
+calculate the life table are suppressed.}
 }
 \description{
 Compute or extend a life table from Hazard Ratios and incidence, or

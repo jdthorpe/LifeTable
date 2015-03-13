@@ -16,6 +16,6 @@ vector of log odds corresponding to \code{x}, the vector of probabilities.
 Transfrom values from the probability to the log-odds scale.
 }
 \examples{
-logOddsToProbs(c(.25,.5.75))
+logOddsToProbs(c(.25,.5,.75))
 }
 

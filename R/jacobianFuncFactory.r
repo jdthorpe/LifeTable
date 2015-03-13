@@ -32,19 +32,19 @@ getJacFun <- function(x0,txParamList,txParamNames){
 			print('error in partials[[txParamNames[i]]] %*% x0')
 			print('error in partials[[txParamNames[i]]] %*% x0')
 			print('error in partials[[txParamNames[i]]] %*% x0')
-			while(T)browser()
+			while(TRUE)browser()
 		})
 
 		if(any(is.nan(Jacobian))){
 			print('any(is.nan(Jacobian))')
 			print('any(is.nan(Jacobian))')
 			print('any(is.nan(Jacobian))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 
 #-- 		cat('Jacobian: \n')
 #-- 		print(Jacobian[states %in% txParamNames,])
-		#pause=T; while(pause) browser()
+		#pause=TRUE; while(pause) browser()
 
 		# fixme: states is only availble here by coincidence...
 		return(Jacobian[states %in% txParamNames,])

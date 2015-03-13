@@ -32,7 +32,7 @@ hazardModel <- matrix(c(
 		1,1-0.3,1-0.4,0,0,0,
 		1,1    ,1    ,1,0,0),
 					  ncol=6,
-					  byrow=T,
+					  byrow=TRUE,
 					  dimnames = list(stateNames,
 									  stateNames))
 

@@ -26,7 +26,7 @@ get_pAB_matrix <- function(allGatesMX,
 		out[i,j] <- get_pAB(to=i,from=j,switchProbs,...)
 		if(is.nan(out[i,j])){
 			print('stop pAB nan')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 	}
 
@@ -37,7 +37,7 @@ get_pAB_matrix <- function(allGatesMX,
 		pChangeCategory <- sum(out[,i])
 		if(is.na(pChangeCategory)){
 			print('if(is.na(pChangeCategory))')
-			while(T)browser()
+			while(TRUE)browser()
 		}
 		if(pChangeCategory > 1 ) {
 			if (pChangeCategory < 1 + 1E-5){
@@ -45,7 +45,7 @@ get_pAB_matrix <- function(allGatesMX,
 				out[,i] <- out[,i]/pChangeCategory
 			} else {
 				print('if(pChangeCategory > 1)')
-				while(T)browser()
+				while(TRUE)browser()
 				stop('pChangeCategory cannot be greater than 1')
 			}
 		}

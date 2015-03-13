@@ -53,7 +53,7 @@ paramGuess  <- function(...){
 			paramGuesses <- logodds(as.numeric(simpleTransitionProbs))
 		},error = function(e){
 			print('paramGuesses <- logodds(as.numeric(simpleTransitionProbs))')
-			while(T)browser()
+			while(TRUE)browser()
 		})
 		names(paramGuesses) <- txParamNames
 		return(paramGuesses)

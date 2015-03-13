@@ -25,7 +25,7 @@ pathsFromAtoB <- function(...){
 				 }else {
 					 stop("ERROR: grepl('infinite recursion',e$message)")
 					 print("ERROR: grepl('infinite recursion',e$message)")
-					 while(T)browser()
+					 while(TRUE)browser()
 				 }
 			 })
 	if(is.null(out)){

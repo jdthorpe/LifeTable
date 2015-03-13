@@ -13,7 +13,9 @@ across the state space at the start of the life table iteration.}
 \item{M}{A matrix with the abosolute (net) risks of transition from any
 state in the state-space model to another.}
 
-\item{data}{A data.frame with one row per age interval, ordered by age.}
+\item{steps}{positive integer. The number of rows to return in the life table for each
+row in the parameter \code{M}.  Setting \code{stpes = n} results in the addtion
+of \code{n-1} intermediate records in the return value.}
 }
 \description{
 Compute a single increment (step) of a life table given the initial state
@@ -29,7 +31,7 @@ Edition.
 NOTE THAT THIS FUNCTION REQUIRES RATES AND NOT COUNTS OR PROBABILITEIS!
 if you have expected counts (i.e. proportions of the \strong{entire}
 birth cohort) of event (arrivals at a node) within an
-interval, use \code\link{countsToLifeTable}
+interval, use \code{\link{countsToLifeTable}}
 }
 \seealso{
 Other lifetable: \code{\link{continuousHazardsFromIncidenceCounts}};

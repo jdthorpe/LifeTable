@@ -103,7 +103,7 @@ get_pAB <- function(from,# from node
 				pSwitchStates <-  prod(ifelse(switchStates[exits], switchProbs[exits], 1-switchProbs[exits]))
 				if(is.na(pSwitchStates)){
 					print('if(is.na(pSwitchStates))')
-					while(T)browser()
+					while(TRUE)browser()
 				}
 
 				totalExitSwitchProb <- totalExitSwitchProb +  pSwitchStates
@@ -158,7 +158,7 @@ get_pAB <- function(from,# from node
 										1-switchProbs[exits]))
 			if(is.na(pSwitchStates)){
 				print('if(is.na(pSwitchStates))')
-				while(T)browser()
+				while(TRUE)browser()
 			}
 			# GET THE GATE STATS
 			(exitIsOpen <-  hasExitHash[[paste(switchStates,collapse = '')]] )

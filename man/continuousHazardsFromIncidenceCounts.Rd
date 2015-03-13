@@ -4,7 +4,7 @@
 \alias{continuousHazardsFromIncidenceCounts}
 \title{Compute a continuous hazards matrix}
 \usage{
-continuousHazardsFromIncidenceCounts(x0, incidence, RR, handleError = FALSE)
+continuousHazardsFromIncidenceCounts(x0, incidence, RR, .handleError = FALSE)
 }
 \arguments{
 \item{x0}{a vector with the distribution of the \strong{observed}
@@ -20,6 +20,8 @@ of the other nodes.  Note that loops in the transition
 states are not allowed, so most of the elements of \code{RR} will be
 zero (including \strong{all} of the diagonal elt's). All RR's
 must be positive.}
+
+\item{.handleError}{used internally}
 
 \item{transformation}{the transformation to use in optimizing the rates.
 options include 'logOdds', 'logNegativeSquaredInverse',and 'identity',

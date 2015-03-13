@@ -4,7 +4,7 @@
 \alias{generateModelParams}
 \title{create XML probabability distributions for PopSim}
 \usage{
-generateModelParams(ages, netHazards, hazardNames = colNames(netHazards),
+generateModelParams(ages, netHazards, hazardNames = colnames(netHazards),
   file, baseSeed = format(as.Date(date(), "\%a \%b \%d \%H:\%M:\%S \%Y"),
   "\%Y\%m\%d"))
 }
