@@ -83,11 +83,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>A life table divides a birth cohort into a discrete set of states such that for any given age, an individual in the cohort is place in exactly 1 state. States in a two-state, might be “Alive” vs. “Dead”, and in a three-state life table might be “Alive without disease”, “Alive with Disease”, and “Dead”.</p>
 <p>The states that make up a Life tables can be represented by a graph such as:</p>
 <pre class="r"><code># make graphs here.</code></pre>
-<p>This package further assumes that the graph is acyclic, meaning that once an individual moves out of a particular state, it is not possible to return to that state. In the three-state model, it is therefor not possible to return to the “Alive without disease”, after having departed that state to either the “Alive with diseae” or “Dead” state.</p>
-<p>Creating an acyclig graph can often be achieved by defining states on the events in an individual’s history. For example, we can re-define the three state model by re-naming the categories “No Prior death or diagnosis”, “Prior Disease Diagnosis without Prior Death”, and “Prior Death”. Whith these lables, it is clear that even if an individual recovers from a disease and is considered “disease free” from a clinical standpoint, that individual still belongs in the second state in the state-space.</p>
+<p>This package further assumes that the graph is acyclic, meaning that once an individual moves out of a particular state, it is not possible to return to that state. In the three-state model, it is therefor not possible to return to the “Alive without disease”, after having departed that state to either the “Alive with disease” or “Dead” state.</p>
+<p>Creating an acyclic graph can often be achieved by defining states on the events in an individual’s history. For example, we can re-define the three state model by re-naming the categories “No Prior death or diagnosis”, “Prior Disease Diagnosis without Prior Death”, and “Prior Death”. With these labels, it is clear that even if an individual recovers from a disease and is considered “disease free” from a clinical standpoint, that individual still belongs in the second state in the state-space.</p>
 <p>Because the State-Space is acyclic, three will naturally be a source states (states which only have arrows pointing away from them), zero or more transient states (states with arrows pointing toward and away), and one or more absorbing states (states which only have arrows pointing toward them. In our three-state life table, “Alive without Disease” is a source state, and “Dead” is an absorbing state. When defining states based on the events in an individual’s history at a given age, there can be only one source state (“no prior events”) but there can be multiple transient states (e.g. multiple disease states) and absorbing states (e.g. Death With vs. without disease)</p>
 <p>The <em>Incidence</em> of a given state is the number of individuals who arrive at that state. For example, when the three state model has run to completion (the date of death of the last individual in the cohort), the incidence of death will be 100%, the incidence of “disease” will between 0 and 100%, and the incidence of healthy will be zero (since no-one ‘arrives’ at that state).</p>
-<p>When thinking about incidence, the ‘States-as-a-set-of-prior-events’ is particularly useful, because we can define the incidence of a state as the incidence of a particular event, such as disease diagnosis or death.<br />For a given time interval <span class="math">\([t_0,t_1]\)</span>, the incidence depencs on the size of the at-riak population and the risk of that particular event and the duration of the time period (t_1 - t_0). For source states, the incidence during any period is zero, and for absorbing states, the incidence is the difference between the portion of the population at that state between <span class="math">\(t_0\)</span> and <span class="math">\(t_1\)</span>. For any given time period, the incidence of a transient state will typically be greater than the difference between the number of individuals at that state between the start and end of the time period. For example, if the ‘disease’ state in the 3-state model is highly lethal (Pancreatic cancer, for example), and the time periods were relatively long (10 years), nearly all individuals who entered the disease state during that interval would have died by the end of the interval.</p>
+<p>When thinking about incidence, the ‘States-as-a-set-of-prior-events’ is particularly useful, because we can define the incidence of a state as the incidence of a particular event, such as disease diagnosis or death.<br />For a given time interval <span class="math">\([t_0,t_1]\)</span>, the incidence depends on the size of the at-risk population and the risk of that particular event and the duration of the time period (t_1 - t_0). For source states, the incidence during any period is zero, and for absorbing states, the incidence is the difference between the portion of the population at that state between <span class="math">\(t_0\)</span> and <span class="math">\(t_1\)</span>. For any given time period, the incidence of a transient state will typically be greater than the difference between the number of individuals at that state between the start and end of the time period. For example, if the ‘disease’ state in the 3-state model is highly lethal (Pancreatic cancer, for example), and the time periods were relatively long (10 years), nearly all individuals who entered the disease state during that interval would have died by the end of the interval.</p>
 </div>
 <div id="definitions" class="section level2">
 <h2>Definitions</h2>
@@ -102,7 +102,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p><span class="math">\[ m_{i,j} = \left\{ \begin{array}{ll}
 \dfrac{\lambda_{i,j}}{\lambda_{i,1}} &amp; \mbox{if $\lambda_{i,1} \gt 0$};\\
 0 &amp; \mbox{otherwise}\end{array} \right. \]</span></p>
-<p>Since the model matrix describes the relative risks of experieincing a particular event conditional on the events in an individual’s history, the model matrix will be typically be constructed from one or more Cox PH models where each model is used to construct one row of the model matrix.</p>
+<p>Since the model matrix describes the relative risks of experiencing a particular event conditional on the events in an individual’s history, the model matrix will be typically be constructed from one or more Cox PH models where each model is used to construct one row of the model matrix.</p>
 </div>
 <div id="exercises" class="section level2">
 <h2>Exercises</h2>
@@ -194,7 +194,7 @@ head(Cancer_Vs_Death,3)
 #&gt; 0 &lt;= Age &lt; 5   0.9892899     2.70e-06       0.0107074
 #&gt; 5 &lt;= Age &lt; 10  0.9885452     1.68e-05       0.0114380
 #&gt; 10 &lt;= Age &lt; 15 0.9876767     5.88e-05       0.0122645</code></pre>
-<p>In addition to re-capitulating the state table, <code>lifeTable()</code> has also calculated the net hazards for the referecne category (<span class="math">\(\lambda_{i,1}\)</span>):</p>
+<p>In addition to re-capitulating the state table, <code>lifeTable()</code> has also calculated the net hazards for the reference category (<span class="math">\(\lambda_{i,1}\)</span>):</p>
 <pre class="r"><code>head(Cancer_Vs_Death$netHazards,3)
 #&gt;                healthy cancerOrDead DeathWithoutEOC
 #&gt; 0 &lt;= Age &lt; 5         0 2.714563e-06    0.0107651514
@@ -203,7 +203,7 @@ head(Cancer_Vs_Death,3)
 </div>
 <div id="expanding-the-life-table" class="section level2">
 <h2>Expanding the life table</h2>
-<p>Transient states can be added to the model if either the incidence or net hazards of each state additional state are knowon.</p>
+<p>Transient states can be added to the model if either the incidence or net hazards of each state additional state are known.</p>
 <p>Here, we’ll add 3 transient states in order to incorporate the use of Tubal Ligation, Hysterectomy with Salpingectomy (Removal of the uterus and tubes), and Oophorectomy (removal of the ovaries) into our model. The <code>LifeTable</code> package contains a dataset with the numbers of each of these procedures per 100k persons in the United States in 2003.</p>
 <pre class="r"><code>data(GyneclogicalSureryRatesPer100k)
 
@@ -223,7 +223,7 @@ head(GyneclogicalSureryRatesPer100k,3)
 #&gt; 10 to 14                                 0.5
 
 
-# we're intereseted in all excision of the uterus, so we 
+# we're interested in all excision of the uterus, so we 
 # need to include both sub-categories.
 AnualHyterectomyRates &lt;- (GyneclogicalSureryRatesPer100k$&quot;Hysterectomy__abdominal_and_vaginal&quot; +
                      GyneclogicalSureryRatesPer100k$&quot;Other_excision_of_cervix_and_uterus&quot;) / 100000
@@ -276,15 +276,15 @@ OophorectomyIncidence  &lt;- alive * 5 * AnualOophorectomyRates  / 100000
 </div>
 <div id="method-2-rates-as-hazards" class="section level3">
 <h3>Method 2: Rates as Hazards</h3>
-<p>In the model bitth cohort, the at-risk population for the three transient states is dwindling over time as women are diagnosed with cancer or die without cancer. However, this may not be true of the at-risk population used in estimating the rates per 100k of each procedure. In particular, the at-risk population that may be steady state (if younger women age into the at risk population at the approximatly the same rate that women die) or it may even be growing over time (due to variation in the birth and death rates over the last century). In the case of the steady-state at-risk population, the estimated rates can be incuded as as net hazards (<span class="math">\(\lambda\)</span>)for the alive population, and We can use the relation</p>
+<p>In the model birth cohort, the at-risk population for the three transient states is dwindling over time as women are diagnosed with cancer or die without cancer. However, this may not be true of the at-risk population used in estimating the rates per 100k of each procedure. In particular, the at-risk population that may be steady state (if younger women age into the at risk population at the approximately the same rate that women die) or it may even be growing over time (due to variation in the birth and death rates over the last century). In the case of the steady-state at-risk population, the estimated rates can be included as as net hazards (<span class="math">\(\lambda\)</span>)for the alive population, and We can use the relation</p>
 <p><span class="math">\(h = 1 - e^{-\lambda * (t_1 - t_0)}\)</span></p>
 <p>to calculate the incidence as follows:</p>
-<pre class="r"><code># scale the rates to the proporition of the birth cohort
+<pre class="r"><code># scale the rates to the proportion of the birth cohort
 # that is alive in each age range rather than 100,000
 HyterectomyIncidence_alt   &lt;- alive * (1-exp( - 5 * AnualHyterectomyRates   / 100000 ))
 TubalLigationIncidence_alt &lt;- alive * (1-exp( - 5 * AnualTubalLigationRates / 100000 ))
 OophorectomyIncidence_alt  &lt;- alive * (1-exp( - 5 * AnualOophorectomyRates  / 100000 ))</code></pre>
-<p>In this instance, this adjustmemt makes little difference owing to the relatively low rates of each event (since as <span class="math">\(\lambda \rightarrow 0\)</span>, $ 1 $ ).</p>
+<p>In this instance, this adjustment makes little difference owing to the relatively low rates of each event (since as <span class="math">\(\lambda \rightarrow 0\)</span>, $ 1 $ ).</p>
 </div>
 </div>
 <div id="constructing-the-life-table." class="section level2">

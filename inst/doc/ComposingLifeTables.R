@@ -69,7 +69,7 @@ data(GyneclogicalSureryRatesPer100k)
 head(GyneclogicalSureryRatesPer100k,3)
 
 
-# we're intereseted in all excision of the uterus, so we 
+# we're interested in all excision of the uterus, so we 
 # need to include both sub-categories.
 AnualHyterectomyRates <- (GyneclogicalSureryRatesPer100k$"Hysterectomy__abdominal_and_vaginal" +
 					 GyneclogicalSureryRatesPer100k$"Other_excision_of_cervix_and_uterus") / 100000
@@ -108,7 +108,7 @@ OophorectomyIncidence  <- alive * 5 * AnualOophorectomyRates  / 100000
 
 
 ## ------------------------------------------------------------------------
-# scale the rates to the proporition of the birth cohort
+# scale the rates to the proportion of the birth cohort
 # that is alive in each age range rather than 100,000
 HyterectomyIncidence_alt   <- alive * (1-exp( - 5 * AnualHyterectomyRates   / 100000 ))
 TubalLigationIncidence_alt <- alive * (1-exp( - 5 * AnualTubalLigationRates / 100000 ))

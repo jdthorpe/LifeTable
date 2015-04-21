@@ -32,13 +32,13 @@ This package further assumes that the graph is acyclic, meaning that once an
 individual moves out of a particular state, it is not possible to return to
 that state.  In the three-state model, it is therefor not possible to return
 to the "Alive without disease", after having departed that state to either
-the "Alive with diseae" or "Dead" state. 
+the "Alive with disease" or "Dead" state. 
 
-Creating an acyclig graph can often be achieved by defining states on the
+Creating an acyclic graph can often be achieved by defining states on the
 events in an individual's history.  For example, we can re-define the three
 state model by re-naming the categories "No Prior death or diagnosis",
-"Prior Disease Diagnosis without Prior Death", and "Prior Death".  Whith
-these lables, it is clear that even if an individual recovers from a disease
+"Prior Disease Diagnosis without Prior Death", and "Prior Death".  With
+these labels, it is clear that even if an individual recovers from a disease
 and is considered "disease free" from a clinical standpoint, that individual
 still belongs in the second state in the state-space. 
 
@@ -62,8 +62,8 @@ state).
 When thinking about incidence, the 'States-as-a-set-of-prior-events' is
 particularly useful, because we can define the incidence of a state as the
 incidence of a particular event, such as disease diagnosis or death.  
-For a given time interval $[t_0,t_1]$, the incidence depencs on the size of
-the at-riak population and the risk of that particular event and the
+For a given time interval $[t_0,t_1]$, the incidence depends on the size of
+the at-risk population and the risk of that particular event and the
 duration of the time period (t_1 - t_0).  For source states, the incidence
 during any period is zero, and for absorbing states, the
 incidence is the difference between the portion of the population at that
@@ -111,7 +111,7 @@ with where
 0 & \mbox{otherwise}\end{array} \right. \]
 
 
-Since the model matrix describes the relative risks of experieincing a
+Since the model matrix describes the relative risks of experiencing a
 particular event conditional on the events in an individual's history, 
 the model matrix will be typically be constructed from one or more Cox PH
 models where each model is used to construct one row of the model matrix.
@@ -219,7 +219,7 @@ head(Cancer_Vs_Death$states/10000000,3)
 ```
 
 In addition to re-capitulating the state table, `lifeTable()` has also
-calculated the net hazards for the referecne category ($\lambda_{i,1}$):
+calculated the net hazards for the reference category ($\lambda_{i,1}$):
 
 
 ```{r}
@@ -229,7 +229,7 @@ head(Cancer_Vs_Death$netHazards,3)
 ## Expanding the life table
 
 Transient states can be added to the model if either the
-incidence or net hazards of each state additional state are knowon. 
+incidence or net hazards of each state additional state are known. 
 
 Here, we'll add 3 transient states in order to incorporate the use of Tubal
 Ligation, Hysterectomy with Salpingectomy (Removal of the uterus and tubes),
@@ -244,7 +244,7 @@ data(GyneclogicalSureryRatesPer100k)
 head(GyneclogicalSureryRatesPer100k,3)
 
 
-# we're intereseted in all excision of the uterus, so we 
+# we're interested in all excision of the uterus, so we 
 # need to include both sub-categories.
 AnualHyterectomyRates <- (GyneclogicalSureryRatesPer100k$"Hysterectomy__abdominal_and_vaginal" +
 					 GyneclogicalSureryRatesPer100k$"Other_excision_of_cervix_and_uterus") / 100000
@@ -316,15 +316,15 @@ population sizes may be appropriate.)
 
 ### Method 2: Rates as Hazards
 
-In the model bitth cohort, the at-risk population for the three transient states is
+In the model birth cohort, the at-risk population for the three transient states is
 dwindling over time as women are diagnosed with cancer or die without
 cancer.  However, this may not be true of the at-risk population used in
 estimating the rates per 100k of each procedure.  In particular, the at-risk population 
 that may be steady state (if younger women age into the at risk population
- at the approximatly the same rate that women die) or it may even be growing over 
+ at the approximately the same rate that women die) or it may even be growing over 
 time (due to variation in the birth and death rates over the last century). 
 In the case of the steady-state at-risk population, the estimated rates can
-be incuded as as net hazards ($\lambda$)for the alive population, and We can use
+be included as as net hazards ($\lambda$)for the alive population, and We can use
 the relation 
 
  $h = 1 - e^{-\lambda * (t_1 - t_0)}$
@@ -332,14 +332,14 @@ the relation
 to calculate the incidence as follows:
 
 ```{r}
-# scale the rates to the proporition of the birth cohort
+# scale the rates to the proportion of the birth cohort
 # that is alive in each age range rather than 100,000
 HyterectomyIncidence_alt   <- alive * (1-exp( - 5 * AnualHyterectomyRates   / 100000 ))
 TubalLigationIncidence_alt <- alive * (1-exp( - 5 * AnualTubalLigationRates / 100000 ))
 OophorectomyIncidence_alt  <- alive * (1-exp( - 5 * AnualOophorectomyRates  / 100000 ))
 ```
 
-In this instance, this adjustmemt makes little difference owing to the relatively low
+In this instance, this adjustment makes little difference owing to the relatively low
 rates of each event (since as $\lambda \rightarrow 0$, $\frac{1-\lambda}{e^{-\lambda}} 
 \rightarrow 1 $ ).  
 
