@@ -2,8 +2,7 @@
 title: "An introduction to the 'LifeTable' package"
 author: "Jason Thorpe [jdthorpe_at_gmail.com]"
 date: "`r Sys.Date()`"
-output: 
-  html_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{LifeTable}
   %\VignetteEngine{knitr::rmarkdown}

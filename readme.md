@@ -47,8 +47,6 @@ incidence, survival, and (age conditional) life expectancy.
 	library(mfactor)
 	vignette("ComposingLifeTables")
 	```
-	or browse the HTML version of the vignette [here](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html).
-
-## Notes
+	or browse the HTML version of the vignette  [here](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html).
 
 
