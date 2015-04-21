@@ -38,15 +38,13 @@ incidence, survival, and (age conditional) life expectancy.
         install.packages("LifeTable.zip", repos = NULL)
 
         # Remove the package after installation
-        unlink("mfactor.zip")
+        unlink("LifeTable.zip")
         ```
 
-3. View the introduction vignette via:
+3. View the [Introduction To LifeTable](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html)  vignette:
 
 	```R
-	library(mfactor)
+	library(LifeTable)
 	vignette("ComposingLifeTables")
 	```
-	or browse the HTML version of the vignette  [here](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html).
-
 
