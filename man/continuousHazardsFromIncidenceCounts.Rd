@@ -22,10 +22,6 @@ zero (including \strong{all} of the diagonal elt's). All RR's
 must be positive.}
 
 \item{.handleError}{used internally}
-
-\item{transformation}{the transformation to use in optimizing the rates.
-options include 'logOdds', 'logNegativeSquaredInverse',and 'identity',
-matched by \code{match.arg}.  (default = 'logOdds').}
 }
 \description{
 Calculate rates on the basis of the entire cohort from rates

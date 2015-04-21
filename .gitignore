@@ -1,4 +1,4 @@
-# History files
+# R History files
 .Rhistory
 
 # Example code in package build process
@@ -10,5 +10,9 @@
 # RStudio files
 .Rproj.user/
 
-# instance doc files
-inst/doc
+# instance doc files including vignettes
+# inst/doc
+
+# temporary Vim files
+*~
+*.sw?

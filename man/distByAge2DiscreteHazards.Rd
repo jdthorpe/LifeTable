@@ -23,6 +23,9 @@ datafraem which contain the counts or probabilies for each state.}
 a life table calculateion, created by calling
 \code{prepParams(hazNameMX,propHazMx)}}
 
+\item{writeFile}{and optional file filename or connection to which intermediatae
+retults are written.  Allows for restarting when a (long running) process fails.}
+
 \item{file}{(optional) Either a character string naming a file or a
 connection open for writing.  '""' indicates output to the console.  This
 can be useful for monitoring a long running procedure.}
