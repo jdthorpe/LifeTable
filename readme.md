@@ -22,9 +22,7 @@ incidence, survival, and (age conditional) life expectancy.
     ```R
     devtools::install_github("jdthorpe/LifeTable")
     ```
-
     note that in windows, you may have to build the github tools using: 
-
 
     ```R
     library(devtools)
@@ -41,7 +39,7 @@ incidence, survival, and (age conditional) life expectancy.
         unlink("LifeTable.zip")
         ```
 
-3. View the [Introduction To LifeTable](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html)  vignette:
+3. View the [Introduction to the LifeTable package](http://htmlpreview.github.io/?https://github.com/jdthorpe/LifeTable/blob/master/inst/doc/ComposingLifeTables.html)  vignette:
 
 	```R
 	library(LifeTable)
