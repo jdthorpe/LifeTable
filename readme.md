@@ -14,7 +14,7 @@ incidence, survival, and (age conditional) life expectancy.
 
 ## Getting Started
 
-1. Install the release version of `devtools` from CRAN with `install.packages("devtools")`.
+1. Install the release version of `devtools` from CRAN with `install.packages(c("devtools","rootSolve"))`.
 
 2. To install mfactor from github use: .
 
