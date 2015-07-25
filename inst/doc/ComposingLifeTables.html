@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jason Thorpe [jdthorpe_at_gmail.com]" />
 
-<meta name="date" content="2015-04-21" />
+<meta name="date" content="2015-07-25" />
 
 <title>An introduction to the LifeTable package</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">An introduction to the ‘LifeTable’ package</h1>
 <h4 class="author"><em>Jason Thorpe [jdthorpe_at_gmail.com]</em></h4>
-<h4 class="date"><em>2015-04-21</em></h4>
+<h4 class="date"><em>2015-07-25</em></h4>
 </div>
 
 
@@ -229,7 +229,7 @@ AnualOophorectomyRates  &lt;-<span class="st"> </span>AnualOophorectomyRates *<s
 <div id="method-1-rates-as-incidence" class="section level3">
 <h3>Method 1: Rates as Incidence</h3>
 <p>The denominator for the ‘rate’ variables calculated above is the estimated number alive of women in the observation period for each age range. If these rates they can be used calculate the incidence of each of the transient staes if by multiplying each by the proportion of the original birth cohort that is alive during each age interval.</p>
-<p>However, the life table <code>EOC_develop</code>, does not have an ‘alive’ category, and no combination of the three states captures the proportion alive wihtin each interval. In order to calculate the incidence for our expanded life table, we’ll need to take advantage of another the dataset <code>EOC_death</code> (also constructed by DevCan) which includes three states: (1) Alive (2) dead from cancer, and (3) Dead without cancer.</p>
+<p>However, the life table <code>EOC_develop</code>, does not have an ‘alive’ category, and no combination of the three states captures the proportion alive within each interval. In order to calculate the incidence for our expanded life table, we’ll need to take advantage of another the dataset <code>EOC_death</code> (also constructed by DevCan) which includes three states: (1) Alive (2) dead from cancer, and (3) Dead without cancer.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(EOC_death)
 <span class="kw">head</span>(EOC_death,<span class="dv">3</span>)
 <span class="co">#&gt;                AliveAtBegining CancerDeaths DeathsOtherCauses</span>
@@ -316,23 +316,23 @@ life_table_with_Procedures &lt;-<span class="st"> </span><span class="kw">lifeTa
 <span class="co">#&gt; A LifeTable object with the following states:</span>
 <span class="co">#&gt;                  healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt;                1.0000000 0.000000e+00 0.000000e+00      0.000000e+00</span>
-<span class="co">#&gt; 0 &lt;= Age &lt; 5   0.9892899 0.000000e+00 8.050042e-10      2.817518e-09</span>
-<span class="co">#&gt; 5 &lt;= Age &lt; 10  0.9885452 0.000000e+00 1.613860e-09      5.648573e-09</span>
+<span class="co">#&gt; 0 &lt;= Age &lt; 5   0.9892899 0.000000e+00 8.050041e-10      2.817518e-09</span>
+<span class="co">#&gt; 5 &lt;= Age &lt; 10  0.9885452 0.000000e+00 1.613859e-09      5.648573e-09</span>
 <span class="co">#&gt; 10 &lt;= Age &lt; 15 0.9876767 0.000000e+00 2.422155e-09      8.477906e-09</span>
 <span class="co">#&gt; 15 &lt;= Age &lt; 20 0.9859259 1.148497e-07 1.287647e-07      7.797700e-08</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
-<span class="co">#&gt;                    0.0000000       0.0000000</span>
-<span class="co">#&gt; 0 &lt;= Age &lt; 5       0.0000027       0.0107074</span>
-<span class="co">#&gt; 5 &lt;= Age &lt; 10      0.0000168       0.0114380</span>
-<span class="co">#&gt; 10 &lt;= Age &lt; 15     0.0000588       0.0122645</span>
-<span class="co">#&gt; 15 &lt;= Age &lt; 20     0.0001277       0.0139461</span>
+<span class="co">#&gt;                 0.000000e+00       0.0000000</span>
+<span class="co">#&gt; 0 &lt;= Age &lt; 5    2.700000e-06       0.0107074</span>
+<span class="co">#&gt; 5 &lt;= Age &lt; 10   1.680000e-05       0.0114380</span>
+<span class="co">#&gt; 10 &lt;= Age &lt; 15  5.880001e-05       0.0122645</span>
+<span class="co">#&gt; 15 &lt;= Age &lt; 20  1.277000e-04       0.0139461</span>
 
 <span class="kw">tail</span>(life_table_with_Procedures,<span class="dv">3</span>)
 <span class="co">#&gt; A LifeTable object with the following states:</span>
 <span class="co">#&gt;                     healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90 2.612499e-01 4.022155e-07 9.752270e-07      7.304736e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95 1.070207e-01 1.647671e-07 4.024565e-07      3.035596e-07</span>
-<span class="co">#&gt; Age &gt;= 95      8.719675e-08 1.342465e-13 3.279077e-13      2.520432e-13</span>
+<span class="co">#&gt; Age &gt;= 95      8.709676e-08 1.340926e-13 3.275317e-13      2.517546e-13</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90     0.0136028       0.7251452</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95     0.0140563       0.8789221</span>
@@ -361,8 +361,8 @@ life_table_with_Procedures &lt;-<span class="st"> </span><span class="kw">lifeTa
 <span class="co">#&gt; A LifeTable object with the following states:</span>
 <span class="co">#&gt;                 healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt;               1.0000000            0 0.000000e+00      0.000000e+00</span>
-<span class="co">#&gt; 0 &lt;= Age &lt; 5  0.9892899            0 8.050042e-10      2.817518e-09</span>
-<span class="co">#&gt; 5 &lt;= Age &lt; 10 0.9885452            0 1.613860e-09      5.648573e-09</span>
+<span class="co">#&gt; 0 &lt;= Age &lt; 5  0.9892899            0 8.050041e-10      2.817518e-09</span>
+<span class="co">#&gt; 5 &lt;= Age &lt; 10 0.9885452            0 1.613859e-09      5.648573e-09</span>
 <span class="co">#&gt;               OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt;                    0.00e+00       0.0000000</span>
 <span class="co">#&gt; 0 &lt;= Age &lt; 5       2.70e-06       0.0107074</span>
@@ -373,7 +373,7 @@ life_table_with_Procedures &lt;-<span class="st"> </span><span class="kw">lifeTa
 <span class="co">#&gt;                     healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90 2.612499e-01 4.022155e-07 9.752270e-07      7.304736e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95 1.070207e-01 1.647671e-07 4.024565e-07      3.035596e-07</span>
-<span class="co">#&gt; Age &gt;= 95      8.719675e-08 1.342465e-13 3.279077e-13      2.520432e-13</span>
+<span class="co">#&gt; Age &gt;= 95      8.709676e-08 1.340926e-13 3.275317e-13      2.517546e-13</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90     0.0136028       0.7251452</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95     0.0140563       0.8789221</span>
@@ -402,7 +402,7 @@ TL_at_40 &lt;-<span class="st"> </span><span class="kw">lifeTable</span>( <span 
 <span class="co">#&gt;                healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90       0            0 2.654519e-01      6.918089e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95       0            0 1.088562e-01      2.877377e-07</span>
-<span class="co">#&gt; Age &gt;= 95            0            0 8.936457e-08      2.389065e-13</span>
+<span class="co">#&gt; Age &gt;= 95            0            0 8.926215e-08      2.386329e-13</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90   0.008271038       0.7262764</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95   0.008547637       0.8825958</span>
@@ -450,7 +450,7 @@ TL_at_age_40 &lt;-<span class="st"> </span><span class="kw">lifeTable</span>(
 <span class="co">#&gt;                healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90       0 2.703069e-01 5.101053e-07      5.467507e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95       0 1.108181e-01 2.116325e-07      2.282239e-07</span>
-<span class="co">#&gt; Age &gt;= 95            0 9.080355e-08 1.737378e-13      1.894926e-13</span>
+<span class="co">#&gt; Age &gt;= 95            0 9.069947e-08 1.735387e-13      1.892756e-13</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90   0.009293121       0.7203989</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95   0.009621686       0.8795598</span>
@@ -473,7 +473,7 @@ No_TL_at_age_40 &lt;-<span class="st"> </span><span class="kw">lifeTable</span>(
 <span class="co">#&gt;                     healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90 2.688185e-01            0 6.368265e-07      5.459855e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95 1.101212e-01            0 2.641924e-07      2.278880e-07</span>
-<span class="co">#&gt; Age &gt;= 95      8.972294e-08            0 2.168864e-13      1.892137e-13</span>
+<span class="co">#&gt; Age &gt;= 95      8.962005e-08            0 2.166378e-13      1.889971e-13</span>
 <span class="co">#&gt;                OvarianCancer DeathWithoutEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90    0.01324549       0.7179348</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95    0.01371212       0.8761662</span>
@@ -554,7 +554,7 @@ life_table_with_procedures_and_histology &lt;-<span class="st"> </span><span cla
 <span class="co">#&gt;                     healthy TubesLigated     NoUterus NoOvariesAndNoEOC</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90 2.612498e-01 4.030907e-07 9.775955e-07      7.304738e-07</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95 1.070206e-01 1.651545e-07 4.035204e-07      3.035596e-07</span>
-<span class="co">#&gt; Age &gt;= 95      7.788036e-08 1.203376e-13 2.941442e-13      2.251485e-13</span>
+<span class="co">#&gt; Age &gt;= 95      7.789682e-08 1.203630e-13 2.942063e-13      2.251960e-13</span>
 <span class="co">#&gt;                   ClearCell Endometrioid        Misc     Mucinous</span>
 <span class="co">#&gt; 85 &lt;= Age &lt; 90 0.0005526648  0.001366658 0.005440619 0.0007808882</span>
 <span class="co">#&gt; 90 &lt;= Age &lt; 95 0.0005581901  0.001386634 0.005749611 0.0007991642</span>
@@ -583,7 +583,186 @@ decisionRuleWriter &lt;-<span class="st"> </span>function(life_table_with_proced
 </div>
 <div id="methodology" class="section level2">
 <h2>Methodology</h2>
-<p>This is where a description of the methodology will go.</p>
+<p>Given a state-space with <span class="math">\(n\)</span> mututally exclusive states in which members of a population are ascribed to a single state at each time <span class="math">\(t\)</span>, the distribution of the population across the states is described by the <span class="math">\(n\)</span>-vector <span class="math">\(u(t)\)</span>. We define a relative hazard matrix <span class="math">\(R\)</span> such that <span class="math">\(r_{i,j} / r_{i,k}\)</span> is the risk of moving to state <span class="math">\(i\)</span> from state <span class="math">\(j\)</span> relative to the risk of moving to <span class="math">\(i\)</span> from state <span class="math">\(k\)</span>.</p>
+<p>Given a vector of net risks <span class="math">\(a\)</span>, we define the hazard matrix H by the relation <span class="math">\(h_{i,j} = r_{i,j} a_i\)</span>, and we define the diagonal matrix <span class="math">\(J\)</span> by the relation <span class="math">\(j_{i,i} = \sum_{K=1}^n h_{k,i}\)</span>.</p>
+<p>The matrix <span class="math">\(H\)</span>, then describes the rates at which members of the population arrive at a each population state (inflow), and <span class="math">\(J\)</span> describes the rate at which members of the population depart each population state, via the differential equation:</p>
+<p><span class="math">\[ 
+ \frac{du}{dt} = (H-J)u
+\]</span></p>
+<p>Solutions to the above differential equation are of the form:</p>
+<p><span class="math">\[ 
+ u(t) = S b(t)
+\]</span></p>
+<p>where <span class="math">\(S\)</span> is the matrix of eigen vectors of <span class="math">\(H-J\)</span> and <span class="math">\(b(t)_i = c_i e^{\lambda_i t}\)</span> for some vector of constants <span class="math">\(c\)</span>, and where <span class="math">\(\lambda\)</span> is the vector of eigen values of <span class="math">\(H-J\)</span> corresponding to the columns of <span class="math">\(S\)</span>. Note that <span class="math">\(b(0) = c = S^{-1} u(0)\)</span>.</p>
+<p>To calculate the cumulative incidence (inflow) for each population state following time <span class="math">\(t=0\)</span>, we define a double system with <span class="math">\(2n\)</span> states in which the first <span class="math">\(n\)</span> states are identical to the system described above, and the second set of <span class="math">\(n\)</span> states have identical the inflow, no outflow, and initial values <span class="math">\(v(0)_i=0\)</span>. The second set of states, therefore, represent the cumulative incidence of the initial system, and the dynanics of double system are described by the differential equation:</p>
+<p><span class="math">\[ 
+ \frac{dx}{dt} = A x
+\]</span></p>
+<p>where,</p>
+<p><span class="math">\[ 
+A = \begin{bmatrix}
+    H-J &amp; 0 \\ 
+    H &amp; 0
+    \end{bmatrix}
+\]</span></p>
+<p>and</p>
+<p><span class="math">\[ 
+x(t) = \begin{bmatrix}
+    u(t) \\ 
+    v(t)
+    \end{bmatrix}
+\]</span></p>
+<p>and the solutions to the double system are of the form:</p>
+<p><span class="math">\[ 
+ x(t) = \begin{bmatrix}
+    S &amp; 0 \\ 
+    T &amp; I
+    \end{bmatrix} \begin{bmatrix}
+    b(t)  \\ 
+    B(t)
+    \end{bmatrix}
+\]</span></p>
+<p>where <span class="math">\(T_{i,j} = (EK)_{i,j} \lambda_j\)</span>. With the initial values :</p>
+<p><span class="math">\[ 
+x(0) 
+= \begin{bmatrix}
+    u(0) \\ 
+    v(0)
+    \end{bmatrix}
+= \begin{bmatrix}
+    x_0 \\ 
+    0
+    \end{bmatrix}
+\]</span></p>
+<p>we can easily show that <span class="math">\(b(t)_i = (S^{-1} x_0)_i e^{\lambda_i t}\)</span> and <span class="math">\(B(t) = T(b(t) - c)\)</span> [<a href="#proof-of-claim">see below</a>]. Hence, the cumulative incidence and distribution of the population at time <span class="math">\(t\)</span> can be calculated from the relative risk matrix (<span class="math">\(R\)</span>), the net hazards (<span class="math">\(a\)</span>), and the initial distribution of population at time <span class="math">\(t=0\)</span>.</p>
+<p>In life table modeling, the initial state <span class="math">\(u(0)\)</span> is assumed at the birth of the cohort, which provides the initial value for the system of equations.</p>
+<p>Entries <span class="math">\(r_{i,j}\)</span> of the relative risk matrix <span class="math">\(R\)</span> may be estimated as the exponent of the coefficients from a fitted Cox proportional hazards model with the state <span class="math">\(i\)</span> is the outcome conditional on model state <span class="math">\(j\)</span>, and may be estimated specific to each age interval.</p>
+<p>In practice, the net risks (<span class="math">\(a\)</span>) are not known, but the cumulative incidence may be observed by counting the incidence of a given state over defined time period, age range, and population. In this case, the Newton-Raphson method may be employed to estimate net-risks from the observed disease incidence. The net risk estimates may thence be used calculate estimates of the population distribution at the end of the each interval and the begining of the next.</p>
+<p>Hence, iterative use of this procedure can be used to calculate complete life tables</p>
+<div id="proof-of-claim" class="section level3">
+<h3>Proof of claim</h3>
+<div id="part-1" class="section level4">
+<h4>Part 1</h4>
+<p>Let <span class="math">\(J,K\)</span> be <span class="math">\(n\times n\)</span> matricies, let <span class="math">\(0,I\)</span> be the <span class="math">\(n\times n\)</span> zero and identity matricies, let the columns of <span class="math">\(S\)</span> be eigen vectors of <span class="math">\(J\)</span> corresponding to the vector of eigen values <span class="math">\(\lambda\)</span>, and let</p>
+<p><span class="math">\[ 
+A = \begin{bmatrix}
+    J &amp; 0 \\ 
+    K &amp; 0
+    \end{bmatrix}
+\]</span></p>
+<p>. Clearly the columns of</p>
+<p><span class="math">\[ \begin{bmatrix} 0 \\ I \end{bmatrix} \]</span></p>
+<p>are in the null space of <span class="math">\(A\)</span> and correspond to eigen values equal to zero. Furthermore if <span class="math">\(x_i\)</span> is an eigen vector of J with eigen value <span class="math">\(\lambda_i\)</span>, then:</p>
+<p><span class="math">\[ 
+A \begin{bmatrix}
+    x_i \\ 
+    \frac{K x_i}{\lambda_i}
+    \end{bmatrix}
+= \begin{bmatrix}
+    J &amp; 0 \\ 
+    K &amp; 0
+    \end{bmatrix} \begin{bmatrix}
+    x_i \\ 
+    \frac{K x_i}{\lambda_i}
+    \end{bmatrix}
+= \begin{bmatrix}
+    J x_i + 0\\ 
+    K x_i + 0
+    \end{bmatrix} 
+= \lambda_i \begin{bmatrix}
+     x_i \\ 
+    \frac{K x_i}{\lambda_i}
+    \end{bmatrix} 
+\]</span></p>
+<p>and hence <span class="math">\(\begin{bmatrix} x_i \\ \frac{K x_i}{\lambda_i} \end{bmatrix}\)</span> is an eigen vector of <span class="math">\(A\)</span>, with eigen value <span class="math">\(\lambda_i\)</span>. Likewise,</p>
+<p><span class="math">\[
+\begin{bmatrix} S &amp; 0 \\ T &amp; I \end{bmatrix} 
+\]</span></p>
+<p>is the matrix of eigen vectors of <span class="math">\(A\)</span> corresponding to the eigen values <span class="math">\(\begin{bmatrix} \lambda_i \\ 0 \end{bmatrix}\)</span>, where:</p>
+<p><span class="math">\(T_{i,j} = (SK)_{i,j} \lambda_j\)</span></p>
+<p>.</p>
+</div>
+<div id="part-2" class="section level4">
+<h4>Part 2</h4>
+<p>From part 1, we see that solutions to the differential equation</p>
+<p><span class="math">\[ 
+ \frac{dx}{dt} = \begin{bmatrix}
+    H-J &amp; 0 \\ 
+    H &amp; 0
+    \end{bmatrix} x
+\]</span></p>
+<p><span class="math">\[ 
+x(t) = \begin{bmatrix}
+    u(t) \\ 
+    v(t)
+    \end{bmatrix}
+\]</span></p>
+<p>are of the form</p>
+<p><span class="math">\[ 
+ x(t) = \begin{bmatrix}
+    S &amp; 0 \\ 
+    T &amp; I
+    \end{bmatrix} \begin{bmatrix}
+    b(t)  \\ 
+    B(t)
+    \end{bmatrix}
+\]</span></p>
+<p>where</p>
+<p><span class="math">\[
+\begin{bmatrix}
+    b(t)  \\ 
+    B(t)
+    \end{bmatrix}
+= \begin{bmatrix}
+    c e^{\lambda t} \\ 
+    d e^{0 \cdot t}
+    \end{bmatrix}
+= \begin{bmatrix}
+    c e^{\lambda t} \\ 
+    d 
+    \end{bmatrix}
+\]</span></p>
+<p>and at time <span class="math">\(t=0\)</span> with initial population state <span class="math">\(x_0\)</span>, we have the initial value problem:</p>
+<p><span class="math">\[
+x(0) 
+= \begin{bmatrix}
+    S &amp; 0 \\ 
+    T &amp; I
+    \end{bmatrix} \begin{bmatrix}
+    c \\ 
+    d 
+    \end{bmatrix}
+= \begin{bmatrix}
+    x_0 \\ 
+    0 
+    \end{bmatrix}
+\]</span></p>
+<p>which can be re-written as via the equations <span class="math">\(S c = x_0\)</span> and <span class="math">\(T x + I d = 0\)</span>, which can be rearranged to show <span class="math">\(c = S^{-1}x_0\)</span> and <span class="math">\(d = -T S^{-1} x_0 = -T c\)</span>.</p>
+</div>
+<div id="part-3" class="section level4">
+<h4>Part 3</h4>
+<p>At time <span class="math">\(t=1\)</span> the population state (<span class="math">\(u(1)\)</span>) and cumulative incidence (<span class="math">\(v(1)\)</span>) are hence:</p>
+<p><span class="math">\[
+x(1) 
+= \begin{bmatrix}
+    u(1) \\ 
+    v(1)
+    \end{bmatrix}
+= \begin{bmatrix}
+    S &amp; 0 \\ 
+    T &amp; I
+    \end{bmatrix} \begin{bmatrix}
+    b(1) \\ 
+    -T c 
+    \end{bmatrix}
+= \begin{bmatrix}
+    S b(1) \\ 
+    T(b(1) - c)
+    \end{bmatrix}
+\]</span></p>
+<p>where <span class="math">\(b(1)_i = c_i e^{\lambda_i} = (S^{-1} x_0)_i e^{\lambda_i}\)</span>.</p>
+</div>
+</div>
 </div>
 
 

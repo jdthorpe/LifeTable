@@ -283,7 +283,7 @@ the transient staes if by multiplying each by the proportion of the
 original birth cohort that is alive during each age interval.  
 
 However, the life table `EOC_develop`, does not have an 'alive' category,
-and no combination of the three states captures the proportion alive wihtin 
+and no combination of the three states captures the proportion alive within 
 each interval.  In order to calculate the incidence for our expanded life
 table, we'll need to take advantage of another the dataset `EOC_death`
 (also constructed by DevCan) which includes three states: (1) Alive (2) dead from
@@ -631,7 +631,6 @@ $1-e^{-(x + y)} < (1-e^{-x}) + (1-e^{-x})$ when $x>0$ and $y>0$.
 
 ## Generating PopSim Model Parameters
 
-
 To parameterize the PopSim model, we need to generate cumulative (net)
 distributions for each of the cancer subtypes and gynecologic procedures
 (contained in the life table `life_table_with_procedures_and_histology` as well as death
@@ -659,10 +658,268 @@ decisionRuleWriter <- function(life_table_with_procedures_and_histology)
 Note that the above code is *almost* everything you need to implement the
 PopSim model for a whole new disease!
 
-
 ## Methodology
 
-This is where a description of the methodology will go.
+Given a state-space with $n$ mututally exclusive states 
+in which members of a population are ascribed to a single state at each time $t$, the 
+distribution of the population across the states is described by the 
+$n$-vector $u(t)$. We define a relative hazard matrix $R$ such that 
+$r_{i,j} / r_{i,k}$ is the risk of moving to state
+$i$ from state $j$ relative to the risk of moving to $i$ from state $k$.  
+
+Given a vector of net risks $a$, we 
+define the hazard matrix H by the relation $h_{i,j} = r_{i,j} a_i$, 
+and we define the diagonal matrix $J$ by the relation $j_{i,i} = \sum_{K=1}^n h_{k,i}$.  
+
+The matrix $H$, then describes the rates at which members of the population 
+arrive at a each population state (inflow), and $J$ describes the rate at 
+which members of the population depart each population state, via the 
+differential equation:
+
+\[ 
+ \frac{du}{dt} = (H-J)u
+\]
+
+Solutions to the above differential equation are of the form:
+
+\[ 
+ u(t) = S b(t)
+\]
+
+where $S$ is the matrix of eigen vectors of $H-J$ and 
+$b(t)_i = c_i e^{\lambda_i t}$ for some vector of constants $c$, 
+and where $\lambda$ is the vector of eigen values of 
+$H-J$ corresponding to the columns of $S$.  Note that $b(0) = c = S^{-1} u(0)$.
+
+To calculate the cumulative incidence (inflow) for each population state following 
+time $t=0$, we define a double system with $2n$ states in which the first $n$ states are 
+identical to the system described above, and the second set of $n$ states 
+have identical the inflow, no outflow, and initial values $v(0)_i=0$. 
+The second set of states, therefore, represent the cumulative incidence of 
+the initial system, and the dynanics of double system are described 
+by the differential equation:
+
+\[ 
+ \frac{dx}{dt} = A x
+\]
+
+where,
+
+\[ 
+A = \begin{bmatrix}
+	H-J & 0 \\ 
+	H & 0
+	\end{bmatrix}
+\]
+
+and 
+
+\[ 
+x(t) = \begin{bmatrix}
+	u(t) \\ 
+	v(t)
+	\end{bmatrix}
+\]
+
+and the solutions to the double system are of the form:
+
+\[ 
+ x(t) = \begin{bmatrix}
+	S & 0 \\ 
+	T & I
+	\end{bmatrix} \begin{bmatrix}
+	b(t)  \\ 
+	B(t)
+	\end{bmatrix}
+\]
+
+where $T_{i,j} = (EK)_{i,j} \lambda_j$.  With the initial values :
+
+
+\[ 
+x(0) 
+= \begin{bmatrix}
+	u(0) \\ 
+	v(0)
+	\end{bmatrix}
+= \begin{bmatrix}
+	x_0 \\ 
+	0
+	\end{bmatrix}
+\]
+
+we can easily show that $b(t)_i = (S^{-1} x_0)_i e^{\lambda_i t}$ and $B(t) = T(b(t) - c)$ [[see below](#proof-of-claim)]. 
+Hence, the cumulative incidence and distribution of the population at time $t$
+can be calculated from the relative risk matrix ($R$), the net hazards
+($a$), and the initial distribution of population at time $t=0$. 
+
+In life table modeling, the initial state $u(0)$ is assumed at the birth 
+of the cohort, which provides the initial value for the system of equations.  
+
+Entries $r_{i,j}$ of the relative risk matrix $R$ may be estimated as the exponent of the 
+coefficients from a fitted Cox proportional hazards model with the state $i$ is the outcome conditional 
+on model state $j$, and may be estimated specific to each age interval.
+
+In practice, the net risks ($a$) are not known, but the cumulative incidence 
+may be observed by counting the incidence of a given state over defined time period, age range, 
+and population.  In this case, the Newton-Raphson method may be employed to estimate
+net-risks from the observed disease incidence.  The net risk estimates may thence be used
+calculate estimates of the population distribution at the end of the each interval 
+and the begining of the next.
+
+Hence, iterative use of this procedure can be used to calculate complete life tables
+
+### Proof of claim
+
+#### Part 1
+
+Let $J,K$ be $n\times n$ matricies, let $0,I$ be the $n\times n$ zero and 
+identity matricies, let the columns of $S$ be eigen vectors of $J$ corresponding 
+to the vector of eigen values $\lambda$, and let 
+
+\[ 
+A = \begin{bmatrix}
+	J & 0 \\ 
+	K & 0
+	\end{bmatrix}
+\]
+
+.  Clearly the columns of 
+
+\[ \begin{bmatrix} 0 \\ I \end{bmatrix} \]
+
+are in the null space of $A$ and correspond to eigen values equal to zero. 
+Furthermore if $x_i$ is an eigen vector of J with eigen value $\lambda_i$, then:
+
+\[ 
+A \begin{bmatrix}
+	x_i \\ 
+	\frac{K x_i}{\lambda_i}
+	\end{bmatrix}
+= \begin{bmatrix}
+	J & 0 \\ 
+	K & 0
+	\end{bmatrix} \begin{bmatrix}
+	x_i \\ 
+	\frac{K x_i}{\lambda_i}
+	\end{bmatrix}
+= \begin{bmatrix}
+	J x_i + 0\\ 
+	K x_i + 0
+	\end{bmatrix} 
+= \lambda_i \begin{bmatrix}
+	 x_i \\ 
+	\frac{K x_i}{\lambda_i}
+	\end{bmatrix} 
+\]
+
+and hence $\begin{bmatrix} x_i \\ \frac{K x_i}{\lambda_i} \end{bmatrix}$ is an eigen vector of $A$,
+with eigen value $\lambda_i$.  Likewise, 
+
+\[
+\begin{bmatrix} S & 0 \\ T & I \end{bmatrix} 
+\]
+
+is the matrix of eigen vectors of $A$
+corresponding to the eigen values $\begin{bmatrix} \lambda_i \\ 0 \end{bmatrix}$, where:
+
+$T_{i,j} = (SK)_{i,j}  \lambda_j$
+
+.
+
+#### Part 2
+
+From part 1, we see that solutions to the differential equation
+
+\[ 
+ \frac{dx}{dt} = \begin{bmatrix}
+	H-J & 0 \\ 
+	H & 0
+	\end{bmatrix} x
+\]
+
+\[ 
+x(t) = \begin{bmatrix}
+	u(t) \\ 
+	v(t)
+	\end{bmatrix}
+\]
+
+are of the form 
+
+\[ 
+ x(t) = \begin{bmatrix}
+	S & 0 \\ 
+	T & I
+	\end{bmatrix} \begin{bmatrix}
+	b(t)  \\ 
+	B(t)
+	\end{bmatrix}
+\]
+
+where 
+
+\[
+\begin{bmatrix}
+	b(t)  \\ 
+	B(t)
+	\end{bmatrix}
+= \begin{bmatrix}
+	c e^{\lambda t} \\ 
+	d e^{0 \cdot t}
+	\end{bmatrix}
+= \begin{bmatrix}
+	c e^{\lambda t} \\ 
+	d 
+	\end{bmatrix}
+\]
+
+and at time $t=0$ with initial population state $x_0$, we have the 
+initial value problem:
+
+\[
+x(0) 
+= \begin{bmatrix}
+	S & 0 \\ 
+	T & I
+	\end{bmatrix} \begin{bmatrix}
+	c \\ 
+	d 
+	\end{bmatrix}
+= \begin{bmatrix}
+	x_0 \\ 
+	0 
+	\end{bmatrix}
+\]
+
+which can be re-written as via the equations $S c = x_0$ and $T x + I d = 0$, 
+which can be rearranged to show $c = S^{-1}x_0$ and $d = -T S^{-1} x_0  = -T c$.
+
+#### Part 3
+
+At time $t=1$  the population state ($u(1)$) and cumulative incidence ($v(1)$) are 
+hence:
+
+\[
+x(1) 
+= \begin{bmatrix}
+	u(1) \\ 
+	v(1)
+	\end{bmatrix}
+= \begin{bmatrix}
+	S & 0 \\ 
+	T & I
+	\end{bmatrix} \begin{bmatrix}
+	b(1) \\ 
+	-T c 
+	\end{bmatrix}
+= \begin{bmatrix}
+	S b(1) \\ 
+	T(b(1) - c)
+	\end{bmatrix}
+\]
+
+where $b(1)_i = c_i e^{\lambda_i} = (S^{-1} x_0)_i e^{\lambda_i}$.
 
 
 
